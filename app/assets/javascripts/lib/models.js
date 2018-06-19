@@ -312,7 +312,11 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
 
         self.formatCitation = function(abstract) {
             var year = moment(self.start).year();
-            return abstract.formatAuthorsCitation() + " (" + year + ") " + abstract.title + '. ' + self.name + '.';
+            if (abstract.doi !== null) {
+                return abstract.formatAuthorsCitation() + " (" + year + ") " + abstract.title + '. ' + self.name + '. doi:' + abstract.doi;
+            } else {
+                return abstract.formatAuthorsCitation() + " (" + year + ") " + abstract.title + '. ' + self.name + '.';
+            }
         };
 
         self.formatCopyright = function(abstract) {
