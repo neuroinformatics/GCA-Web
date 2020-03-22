@@ -65,15 +65,12 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
      * @constructor
      */
     function Model(uuid) {
-
         if (tools.isGlobalOrUndefined(this)) {
             return new Model(uuid);
         }
 
         var self = this;
-
         self.uuid = uuid || null;
-
 
         self.toObject = function() {
             var prop,
@@ -149,7 +146,6 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
             var obj = self.toObject();
             return JSON.stringify(obj, null, indention);
         };
-
     }
 
     /**
@@ -201,7 +197,6 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
         return created;
     };
 
-
     /**
      * Model for AbstractGroup
      *
@@ -215,8 +210,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
      * @public
      */
     function AbstractGroup(uuid, prefix, name, short) {
-
-        if (! (this instanceof  AbstractGroup)) {
+        if (!(this instanceof  AbstractGroup)) {
             return new AbstractGroup(uuid, prefix, name, short);
         }
 
@@ -243,10 +237,9 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
      * @public
      */
     function Conference(uuid, name, short, group, cite, link, description, isOpen, isPublished, isActive, hasPresentationPrefs,
-                        groups, start, end, deadline, logo, thumbnail, iOSApp, geo, schedule, info, owners, abstracts, topics, 
+                        groups, start, end, deadline, logo, thumbnail, iOSApp, geo, schedule, info, owners, abstracts, topics,
                         mAbsLeng, mFigs) {
-
-        if (! (this instanceof Conference)) {
+        if (!(this instanceof Conference)) {
             return new Conference(uuid, name, short, group, cite, link, description, isOpen, isPublished, isActive,
                                   hasPresentationPrefs, groups, start, end, deadline, logo, thumbnail, iOSApp,
                                   geo, schedule, info, owners, abstracts, topics, mAbsLeng, mFigs);
@@ -321,7 +314,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
 
         self.formatCopyright = function(abstract) {
             var year = moment(self.start).year();
-            return "©" + " (" + year + ") " + abstract.formatAuthorsCitation()
+            return "© (" + year + ") " + abstract.formatAuthorsCitation();
         };
 
         self.toObject = function() {
@@ -332,6 +325,23 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
                 if (self.hasOwnProperty(prop)) {
                     var value = self[prop];
                     var plain = null;
+
+                    // Trim whitespaces before saving
+                    var trimValueProperties = ["name", "short", "cite", "group", "link", "description"];
+                    if (trimValueProperties.includes(prop) && value() !== null && value !== undefined) {
+                        value(value().trim());
+                    }
+
+                    if (prop === "topics" && value() !== null && value !== undefined) {
+                        var cleanTopics = [];
+                        value().forEach(function (model) {
+                            var curr = model.trim();
+                            if (curr.length > 0) {
+                                cleanTopics.push(curr);
+                            }
+                        });
+                        value(cleanTopics);
+                    }
 
                     if (tools.type(value) !== "function") {
                         plain = value;
@@ -353,12 +363,19 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
             }
 
             function appendGroup(model) {
+                // Cleanup leading and trailing whitespaces
+                if (model.short() !== null && model.short() !== undefined) {
+                    model.short(model.short().trim());
+                }
+                if (model.name() !== null && model.name() !== undefined) {
+                    model.name(model.name().trim());
+                }
+
                 obj.groups.push(model.toObject());
             }
 
             return obj;
         };
-
     }
 
     Conference.fromObject = function(obj) {
@@ -403,8 +420,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
      * @public
      */
     function Author(uuid, mail, firstName, middleName, lastName, affiliations) {
-
-        if (! (this instanceof Author)) {
+        if (!(this instanceof Author)) {
             return new Author(uuid, mail, firstName, middleName, lastName, affiliations);
         }
 
@@ -433,7 +449,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
         };
 
         self.formatCitation = function() {
-          var res = self.lastName + ' ';
+          var res = self.lastName + " ";
             res += self.makeInitials(self.firstName);
             res += self.makeInitials(self.middleName);
             return res;
@@ -444,9 +460,8 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
                 return "";
             }
 
-           return name.split(' ').map(function(x){ return x[0]; }).join('');
-        }
-
+           return name.split(" ").map(function(x) { return x[0]; }).join("");
+        };
     }
 
     Author.fromObject = function(obj) {
@@ -456,7 +471,6 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
     Author.fromArray = function(array) {
         return Model.fromArray(array, Author.fromObject);
     };
-
 
     /**
      * Observable model for authors.
@@ -473,10 +487,8 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
      * @public
      */
     function ObservableAuthor(uuid, mail, firstName, middleName, lastName, affiliations) {
-
-        if (! (this instanceof ObservableAuthor)) {
-            return new ObservableAuthor(uuid, mail, firstName, middleName,
-                                        lastName, affiliations);
+        if (!(this instanceof ObservableAuthor)) {
+            return new ObservableAuthor(uuid, mail, firstName, middleName, lastName, affiliations);
         }
 
         var self = tools.inherit(this, Model, uuid);
@@ -502,7 +514,6 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
 
             return formatted.sort().join(", ");
         };
-
     }
 
     ObservableAuthor.fromObject = function(obj) {
@@ -527,8 +538,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
      * @public
      */
     function Affiliation(uuid, address, country, department, section) {
-
-        if (! (this instanceof  Affiliation)) {
+        if (!(this instanceof  Affiliation)) {
             return new Affiliation(uuid, address, country, department, section);
         }
 
@@ -551,7 +561,6 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
 
             return str;
         };
-
     }
 
     Affiliation.fromObject = function(obj) {
@@ -561,7 +570,6 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
     Affiliation.fromArray = function(array) {
         return Model.fromArray(array, Affiliation.fromObject);
     };
-
 
     /**
      * Obervable model for affiliation
@@ -577,8 +585,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
      * @public
      */
     function ObservableAffiliation(uuid, address, country, department, section) {
-
-        if (! (this instanceof  ObservableAffiliation)) {
+        if (!(this instanceof  ObservableAffiliation)) {
             return new ObservableAffiliation(uuid, address, country, department, section);
         }
 
@@ -590,7 +597,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
         self.section = ko.observable(section || null);
 
         self.format = function() {
-            var str =(self.department() || "")
+            var str = (self.department() || "")
                 .concat(self.section() ? ", " + self.section() : "")
                 .concat(self.address() ? ", " + self.address() : "")
                 .concat(self.country() ? ", " + self.country() : "");
@@ -601,7 +608,6 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
 
             return str;
         };
-
     }
 
     ObservableAffiliation.fromObject = function(obj) {
@@ -611,8 +617,6 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
     ObservableAffiliation.fromArray = function(array) {
         return Model.fromArray(array, ObservableAffiliation.fromObject);
     };
-    
-    
 
     /**
      * Model for figure.
@@ -626,8 +630,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
      * @public
      */
     function Figure(uuid, caption, URL) {
-
-        if (! (this instanceof Figure)) {
+        if (!(this instanceof Figure)) {
             return new Figure(uuid, caption, URL);
         }
 
@@ -635,7 +638,6 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
 
         self.caption = caption || null;
         self.URL = caption || null;
-
     }
 
     Figure.fromObject = function(obj) {
@@ -658,8 +660,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
      * @public
      */
     function ObservableFigure(uuid, caption, URL) {
-
-        if (! (this instanceof ObservableFigure)) {
+        if (!(this instanceof ObservableFigure)) {
             return new ObservableFigure(uuid, caption, URL);
         }
 
@@ -667,7 +668,6 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
 
         self.caption = ko.observable(caption || null);
         self.URL = ko.observable(URL || null);
-
     }
 
     ObservableFigure.fromObject = function(obj) {
@@ -691,8 +691,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
      * @public
      */
     function Reference(uuid, text, link, doi) {
-
-        if (! (this instanceof Reference)) {
+        if (!(this instanceof Reference)) {
             return new Reference();
         }
 
@@ -704,16 +703,15 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
 
         self.format = function() {
             var text = self.text || self.link;
-            var html = self.link ? '<a target="_blank" href="' + self.link  + '"' + '>' + text + '</a>' : text;
+            var html = self.link ? '<a target="_blank" href="' + self.link  + '">' + text + "</a>" : text;
 
             if (self.doi) {
                 var dx = self.doi;
-                html += ', <a target="_blank" href="http://dx.doi.org/' + dx + '">' + dx + '</a>';
+                html += ', <a target="_blank" href="https://doi.org/' + dx + '">' + dx + "</a>";
             }
 
             return html;
         };
-
     }
 
     Reference.fromObject = function(obj) {
@@ -723,7 +721,6 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
     Reference.fromArray = function(array) {
         return Model.fromArray(array, Reference.fromObject);
     };
-
 
     /**
      * Observable model for reference.
@@ -738,8 +735,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
      * @public
      */
     function ObservableReference(uuid, text, link, doi) {
-
-        if (! (this instanceof ObservableReference)) {
+        if (!(this instanceof ObservableReference)) {
             return new ObservableReference();
         }
 
@@ -750,13 +746,12 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
         self.doi = ko.observable(doi || null);
 
         self.format = function() {
-
             var text = self.text() || self.link();
-            var html = self.link() ? '<a target="_blank" href="' + self.link()  + '"' + '>' + text + '</a>' : text;
+            var html = self.link() ? '<a target="_blank" href="' + self.link()  + '">' + text + "</a>" : text;
 
             if (self.doi()) {
                 var dx = self.doi();
-                html += ', <a target="_blank" href="http://dx.doi.org/' + dx + '">' + dx + '</a>';
+                html += ', <a target="_blank" href="https://doi.org/' + dx + '">' + dx + "</a>";
             }
 
             return html;
@@ -770,7 +765,6 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
     ObservableReference.fromArray = function(array) {
         return Model.fromArray(array, ObservableReference.fromObject);
     };
-
 
     /**
      * Model for abstracts.
@@ -799,8 +793,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
     function Abstract(uuid, sortId, title, topic, text, doi, conflictOfInterest,
                       acknowledgements, isTalk, reasonForTalk, owners, state, figures,
                       authors, affiliations, references, abstrTypes) {
-
-        if (! (this instanceof Abstract)) {
+        if (!(this instanceof Abstract)) {
             return new Abstract(uuid, sortId, title, topic, text, doi, conflictOfInterest,
                                 acknowledgements, isTalk, reasonForTalk, owners, state,
                                 figures, authors, affiliations, references, abstrTypes);
@@ -825,12 +818,11 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
         self.references = references || [];
         self.abstrTypes = abstrTypes || [];
 
-
         self.paragraphs = function() {
             var para = [];
 
             if (self.text) {
-                para = self.text.split('\n');
+                para = self.text.split("\n");
             }
 
             return para;
@@ -841,14 +833,14 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
         };
 
         self.doiLink = function() {
-            return self.doi ? 'http://doi.org/' + self.doi : null;
+            return self.doi ? "http://doi.org/" + self.doi : null;
         };
 
         self.formatAuthorsCitation = function() {
             var res = "";
-            for(var i = 0; i < self.authors.length; i++) {
+            for (var i = 0; i < self.authors.length; i++) {
                 if (i != 0) {
-                    res += ', ';
+                    res += ", ";
                 }
                 res += self.authors[i].formatCitation();
             }
@@ -863,7 +855,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
                 if (self.hasOwnProperty(prop)) {
                     var value = self[prop];
 
-                    switch(prop) {
+                    switch (prop) {
                         case "authors":
                             obj.authors = [];
                             self.authors.forEach(appendAuthor);
@@ -911,9 +903,9 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
             return obj;
         };
 
-    self.hasTypeWuuid = function (uuid) {
-        return true;
-        }
+        self.hasTypeWuuid = function (uuid) {
+            return true;
+        };
     }
 
     Abstract.fromObject = function(obj) {
@@ -924,7 +916,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
             if (target.hasOwnProperty(prop)) {
                 var value = readProperty(prop, obj);
 
-                switch(prop) {
+                switch (prop) {
                     case "figures":
                         target.figures = Figure.fromArray(value);
                         break;
@@ -955,7 +947,6 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
         return Model.fromArray(array, Abstract.fromObject);
     };
 
-
     /**
      * Observable model for abstracts.
      *
@@ -983,8 +974,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
     function ObservableAbstract(uuid, sortId, title, topic, text, doi, conflictOfInterest,
                                 acknowledgements, isTalk, reasonForTalk, owners, state, figures,
                                 authors, affiliations, references, abstrTypes) {
-
-        if (! (this instanceof ObservableAbstract)) {
+        if (!(this instanceof ObservableAbstract)) {
             return new ObservableAbstract(uuid, sortId, title, topic, text, doi, conflictOfInterest,
                                           acknowledgements, isTalk, reasonForTalk, owners, state,
                                           figures, authors, affiliations, references, abstrTypes);
@@ -1006,13 +996,13 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
         self.authors = ko.observableArray(authors || []);
         self.affiliations = ko.observableArray(affiliations || []);
         self.references = ko.observableArray(references || []);
-        self.abstrTypes = ko.observableArray(abstrTypes||[]);
+        self.abstrTypes = ko.observableArray(abstrTypes || []);
 
         this.isTalk.computed = ko.computed({
-            'read': function() {
+            "read": function() {
                 return self.isTalk().toString();
             },
-            'write': function(val) {
+            "write": function(val) {
                 val = (val === "true");
                 if (!val) {
                     self.reasonForTalk(null);
@@ -1022,13 +1012,12 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
             owner: this
         });
 
-
         self.indexedAuthors = ko.computed(
             function() {
                 var indexed = [];
 
                 self.authors().forEach(function(author, index) {
-                    indexed.push({author: author, index: index})
+                    indexed.push({author: author, index: index});
                 });
 
                 return indexed;
@@ -1040,7 +1029,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
             var para = [];
 
             if (self.text()) {
-                para = self.text().split('\n');
+                para = self.text().split("\n");
             }
 
             return para;
@@ -1054,7 +1043,25 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
                 if (self.hasOwnProperty(prop)) {
                     var value = self[prop];
 
-                    switch(prop) {
+                    switch (prop) {
+                        case "title":
+                            if (value() !== undefined && value() !== null) {
+                                value(value().trim());
+                            }
+                            obj[prop] = toType(value());
+                            break;
+                        case "text":
+                            if (value() !== undefined && value() !== null) {
+                                value(value().trim());
+                            }
+                            obj[prop] = toType(value());
+                            break;
+                        case "acknowledgements":
+                            if (value() !== undefined && value() !== null) {
+                                value(value().trim());
+                            }
+                            obj[prop] = toType(value());
+                            break;
                         case "authors":
                             obj.authors = [];
                             self.authors().forEach(appendAuthor);
@@ -1086,14 +1093,71 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
             }
 
             function appendAuthor(model) {
+                // Post processing, remove all leading and trailing whitespaces.
+                if (model.firstName() !== null && model.firstName() !== undefined) {
+                    model.firstName(model.firstName().trim());
+                }
+                if (model.lastName() !== null && model.lastName() !== undefined) {
+                    model.lastName(model.lastName().trim());
+                }
+                if (model.middleName() !== null && model.middleName() !== undefined) {
+                    model.middleName(model.middleName().trim());
+                }
+                if (model.mail() !== null && model.mail() !== undefined) {
+                    model.mail(model.mail().trim());
+                }
                 obj.authors.push(model.toObject());
             }
 
             function appendAffiliation(model) {
+                // Post processing, remove all leading and trailing whitespaces.
+                if (model.address() !== null && model.address() !== undefined) {
+                    model.address(model.address().trim());
+                }
+                if (model.department() !== null && model.department() !== undefined) {
+                    model.department(model.department().trim());
+                }
+                if (model.country() !== null && model.country() !== undefined) {
+                    model.country(model.country().trim());
+                }
+                if (model.section() !== null && model.section() !== undefined) {
+                    model.section(model.section().trim());
+                }
                 obj.affiliations.push(model.toObject());
             }
 
             function appendReference(model) {
+                // Post processing, remove all leading and trailing whitespaces.
+                if (model.text() !== null && model.text() !== undefined) {
+                    model.text(model.text().trim());
+                }
+                if (model.link() !== null && model.link() !== undefined) {
+                    model.link(model.link().trim());
+                }
+                if (model.doi() !== null && model.doi() !== undefined) {
+                    model.doi(model.doi().trim());
+                }
+
+                // Post process doi. Remove any leading doi link parts that hinder rendering later on.
+                var doiValue = model.doi();
+                if (doiValue !== null && doiValue !== undefined) {
+                    // First remove leading http or https
+                    doiValue = doiValue.replace(/^https:\/\//, "").replace(/http:\/\//, "");
+
+                    // Then search and replace DOI variant hierarchical URL parts
+                    var checkA = /^dx.doi.org\//;
+                    var checkB = /^doi.org\//;
+                    var checkC = /^doi:/;
+
+                    if (checkA.test(doiValue)) {
+                        model.doi(doiValue.replace(checkA, ""));
+                    } else if (checkB.test(doiValue)) {
+                        model.doi(doiValue.replace(checkB, ""));
+                    } else if (checkC.test(doiValue)) {
+                        model.doi(doiValue.replace(checkC, ""));
+                    }
+                }
+
                 obj.references.push(model.toObject());
             }
 
@@ -1103,7 +1167,6 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
 
             return obj;
         };
-
     }
 
     ObservableAbstract.fromObject = function(obj) {
@@ -1114,7 +1177,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
             if (target.hasOwnProperty(prop)) {
                 var value = readProperty(prop, obj);
 
-                switch(prop) {
+                switch (prop) {
                     case "figures":
                         target.figures(Figure.fromArray(value));
                         break;
@@ -1152,7 +1215,6 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
         return Model.fromArray(array, ObservableAbstract.fromObject);
     };
 
-
     /**
      * Observable model for user accounts.
      *
@@ -1164,8 +1226,7 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
      * @public
      */
     function ObservableAccount(uuid, mail, fullName, ctime) {
-
-        if (! (this instanceof ObservableAccount)) {
+        if (!(this instanceof ObservableAccount)) {
             return new ObservableAccount(uuid, mail, fullName, ctime);
         }
 
@@ -1177,12 +1238,11 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
 
         self.formatCtime = function() {
             if (self.ctime) {
-                return moment(self.ctime()).format("YY/MM/DD")
+                return moment(self.ctime()).format("YY/MM/DD");
             } else {
-                return ""
+                return "";
             }
-        }
-
+        };
     }
 
     ObservableAccount.fromObject = function(obj) {
@@ -1206,17 +1266,16 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
      * @public
      */
     function ObservableAbstractGroup(uuid, prefix, name, short) {
-    //Why do i not hgave an self ???
-        if (! (this instanceof ObservableAbstractGroup)) {
+        // Why do i not have a self ???
+        if (!(this instanceof ObservableAbstractGroup)) {
             return new ObservableAbstractGroup(uuid, prefix, name, short);
         }
 
         var self = tools.inherit(this, Model, uuid);
 
-        self.prefix= ko.observable(prefix || null);
+        self.prefix = ko.observable(prefix || null);
         self.name = ko.observable(name || null);
         self.short = ko.observable(short || null);
-
     }
 
     ObservableAbstractGroup.fromObject = function(obj) {
@@ -1226,6 +1285,493 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
     ObservableAbstractGroup.fromArray = function(array) {
         return Model.fromArray(array, ObservableAbstractGroup.fromObject);
     };
+
+    /**
+     * Model for DHTMLX Scheduler events.
+     *
+     * @param {string} [id]
+     * @param {string} [text]
+     * @param {string} [startDate]
+     * @param {string} [endDate]
+     * @param {object} [baseEvent]
+
+     *
+     * @returns {SchedulerEvent}
+     * @constructor
+     * @public
+     */
+    function SchedulerEvent (id, text, startDate, endDate, baseEvent) {
+        if (!(this instanceof SchedulerEvent)) {
+            return new SchedulerEvent(id, text, startDate, endDate, baseEvent);
+        }
+
+        var self = this;
+
+        self.id = id || null;
+        self.text = text || null;
+        self.start_date = startDate || null;
+        self.end_date = endDate || null;
+        self.baseEvent = baseEvent || null;
+        // used for split events to easily collapse them into the parent
+        self.parentEvent = null;
+
+        self.isTrack = function () {
+            return self.baseEvent.hasOwnProperty("events");
+        };
+
+        self.isSession = function () {
+            return self.baseEvent.hasOwnProperty("tracks");
+        };
+
+        self.isEvent = function () {
+            return self.isSession() || self.isTrack();
+        };
+
+        self.getSplitEvents = function () {
+            var splitEvents = [];
+            if (self.isTrack()) {
+                splitEvents = SchedulerEvent.fromArray(self.baseEvent.events);
+            } else if (self.isSession()) {
+                splitEvents = SchedulerEvent.fromArray(self.baseEvent.tracks);
+            }
+            var childID = [];
+            var childIndex = 0;
+            self.id.split(":").forEach(function (idComponent) {
+                childID.push(parseInt(idComponent));
+                // track where the first negative number occurs to use as the new index
+                if (parseInt(idComponent) >= 0) {
+                    childIndex++;
+                }
+            });
+            // replace the corresponding part of the ID with the new index
+            var childIDComponent = 0;
+            splitEvents.forEach(function (element) {
+              element.parentEvent = self;
+              childID[childIndex] = childIDComponent++;
+              element.id = childID.join(":");
+            });
+            return splitEvents;
+        };
+    }
+
+    function Track (title, subtitle, chair, events) {
+        if (!(this instanceof Track)) {
+            return new Track(title, subtitle, chair, events);
+        }
+
+        var self = this;
+
+        self.title = title || null;
+        self.subtitle = subtitle || null;
+        self.chair = chair || null;
+        self.events = events || null;
+
+        /*
+         * Split this track into sub tracks spanning only a single day each.
+         */
+        self.splitByDays = function () {
+          var subtracks = [];
+          var start = self.getStart();
+          var end = self.getEnd();
+          var splitDate = start;
+          while (Schedule.isIntermediateDate(start, end, splitDate)) {
+              var splitEvents = [];
+              self.events.forEach(function (event) {
+                  if (Schedule.isSameDate(event.getStart(), splitDate)) {
+                      splitEvents.push(event);
+                  }
+              });
+              // do not process empty dates
+              if (splitEvents.length > 0) {
+                  subtracks.push(new Track(self.title, self.subtitle, self.chair, splitEvents));
+              }
+              // switch to the next day
+              splitDate = new Date(splitDate.getTime() + 24 * 60 * 60 * 1000);
+          }
+          return subtracks;
+        };
+
+        // look at all the events to find the starting date of the track
+        self.getStart = function () {
+            var startingDate = null;
+
+            self.events.forEach(function (e) {
+                if (startingDate === null) {
+                    startingDate = e.getStart();
+                } else if (startingDate - e.getStart() > 0) {
+                    startingDate = e.getStart();
+                }
+            });
+
+            return startingDate;
+        };
+
+        // look at all the events to find the ending date of the track
+        self.getEnd = function () {
+            var endingDate = null;
+
+            self.events.forEach(function (e) {
+                if (endingDate === null) {
+                    endingDate = e.getEnd();
+                } else if (endingDate - e.getEnd() < 0) {
+                    endingDate = e.getEnd();
+                }
+            });
+
+            return endingDate;
+        };
+    }
+
+    function Session (title, subtitle, tracks) {
+        if (!(this instanceof Session)) {
+            return new Session(title, subtitle, tracks);
+        }
+
+        var self = this;
+
+        self.title = title || null;
+        self.subtitle = subtitle || null;
+        self.tracks = tracks || null;
+
+        /*
+         * Split this session into sub session spanning only a single day each.
+         */
+        self.splitByDays = function () {
+            var subsessions = [];
+            var start = self.getStart();
+            var end = self.getEnd();
+            var splitDate = start;
+            // split all tracks of this session by days
+            var preSplitTracks = [];
+            self.tracks.forEach(function (track) {
+                    track.splitByDays().forEach(function (t) {
+                        preSplitTracks.push(t);
+                    });
+            });
+            while (Schedule.isIntermediateDate(start, end, splitDate)) {
+                var splitTracks = [];
+                preSplitTracks.forEach(function (track) {
+                    if (Schedule.isSameDate(track.getStart(), splitDate)) {
+                        splitTracks.push(track);
+                    }
+                });
+                // do not process empty dates
+                if (splitTracks.length > 0) {
+                    subsessions.push(new Session(self.title, self.subtitle, splitTracks));
+                }
+                // switch to the next day
+                splitDate = new Date(splitDate.getTime() + 24 * 60 * 60 * 1000);
+            }
+            return subsessions;
+        };
+
+        // look at all the tracks to find the starting date of the session
+        self.getStart = function () {
+            var startingDate = null;
+
+            self.tracks.forEach(function (t) {
+                if (startingDate === null) {
+                    startingDate = t.getStart();
+                } else if (startingDate - t.getStart() > 0) {
+                    startingDate = t.getStart();
+                }
+            });
+
+            return startingDate;
+        };
+
+        // look at all the tracks to find the ending date of the session
+        self.getEnd = function () {
+            var endingDate = null;
+
+            self.tracks.forEach(function (t) {
+                if (endingDate === null) {
+                    endingDate = t.getEnd();
+                } else if (endingDate - t.getEnd() < 0) {
+                    endingDate = t.getEnd();
+                }
+            });
+
+            return endingDate;
+        };
+    }
+
+    function Event (title, subtitle, start, end, date, location, authors, type, abstract) {
+        if (!(this instanceof Event)) {
+            return new Event(title, subtitle, start, end, date, location, authors, type, abstract);
+        }
+
+        var self = this;
+
+        self.title = title || null;
+        self.subtitle = subtitle || null;
+        self.start = start || null;
+        self.end = end || null;
+        self.date = date || null;
+        self.location = location || null;
+        self.authors = authors || null;
+        self.type = type || null;
+        self.abstract = abstract || null;
+
+        self.getStart = function () {
+            // format year-month-day
+            var ymd = self.date.split("-");
+            // format hour:minute
+            var time = ["0", "0"];
+            if (self.start && self.start.length > 0) {
+                time = self.start.split(":");
+            }
+            return new Date(parseInt(ymd[0]), parseInt(ymd[1]) - 1, parseInt(ymd[2]), parseInt(time[0]), parseInt(time[1]));
+        };
+
+        self.getEnd = function () {
+            // format year-month-day
+            var ymd = self.date.split("-");
+            // format hour:minute
+            var time = ["23", "59"];
+            if (self.end && self.end.length > 0) {
+                time = self.end.split(":");
+            }
+            return new Date(parseInt(ymd[0]), parseInt(ymd[1]) - 1, parseInt(ymd[2]), parseInt(time[0]), parseInt(time[1]));
+        };
+    }
+
+    /*
+     * Create a DHTMLX Scheduler event from an Event, Track or Session.
+     */
+    SchedulerEvent.fromObject = function (eventObj) {
+        return new SchedulerEvent(null, eventObj.title, eventObj.getStart(), eventObj.getEnd(), eventObj);
+    };
+
+    SchedulerEvent.fromArray = function (eventArray) {
+      return Model.fromArray(eventArray, SchedulerEvent.fromObject);
+    };
+
+    Event.fromObject = function (eventObject) {
+        return Model.fromObject(eventObject, Event);
+    };
+
+    Event.fromArray = function (eventArray) {
+        return Model.fromArray(eventArray, Event.fromObject);
+    };
+
+    Track.fromObject = function (trackObject) {
+        var prop,
+            target = new Track();
+
+        for (prop in target) {
+            if (target.hasOwnProperty(prop)) {
+                var value = readProperty(prop, trackObject);
+
+                switch (prop) {
+                    case "events":
+                        target.events = Event.fromArray(value);
+                        break;
+                    default:
+                        if (tools.type(target[prop]) !== "function") {
+                            target[prop] = value;
+                        }
+                }
+            }
+        }
+
+        return target;
+    };
+
+    Track.fromArray = function (trackArray) {
+        return Model.fromArray(trackArray, Track.fromObject);
+    };
+
+    Session.fromObject = function (sessionObject) {
+        var prop,
+            target = new Session();
+
+        for (prop in target) {
+            if (target.hasOwnProperty(prop)) {
+                var value = readProperty(prop, sessionObject);
+
+                switch (prop) {
+                    case "tracks":
+                        target.tracks = Track.fromArray(value);
+                        break;
+                    default:
+                        if (tools.type(target[prop]) !== "function") {
+                            target[prop] = value;
+                        }
+                }
+            }
+        }
+
+        return target;
+    };
+
+    Session.fromArray = function (sessionArray) {
+        return Model.fromArray(sessionArray, Session.fromObject);
+    };
+
+    /**
+     * Model for conference schedules.
+     *
+     * @param {Array} [content]
+     *
+     * @returns {Schedule}
+     * @constructor
+     * @public
+     */
+    function Schedule (content) {
+        if (!(this instanceof Schedule)) {
+            return new Schedule(content);
+        }
+
+        var self = tools.inherit(this, Model);
+
+        self.content = content || [];
+
+        // Get all the events on the specific date.
+        self.getDailyEvents = function (date) {
+            var dailyEvents = [];
+            self.content.forEach(function (event) {
+                var start = event.getStart();
+                var end = event.getEnd();
+                if ((date.getDate() == start.getDate()
+                        && date.getMonth() == start.getMonth()
+                        && date.getFullYear() == start.getFullYear())
+                    || (date.getDate() == end.getDate()
+                        && date.getMonth() == end.getMonth()
+                        && date.getFullYear() == end.getFullYear())) {
+                    dailyEvents.push(event);
+                }
+            });
+            return dailyEvents;
+        };
+
+        // Check if the specified date is part of the schedule.
+        self.isScheduledDate = function (date) {
+            // only compare date not exact time
+            return Schedule.isIntermediateDate(self.getStart(), self.getEnd(), date);
+        };
+
+        // Get all the events present in the schedule.
+        self.getEvents = function () {
+            var events = [];
+            self.content.forEach(function (c) {
+                if (c instanceof Event) {
+                    events.push(c);
+                }
+            });
+            return events;
+        };
+
+        // Get all the tracks present in the schedule.
+        self.getTracks = function () {
+            var tracks = [];
+            self.content.forEach(function (c) {
+                if (c instanceof Track) {
+                    tracks.push(c);
+                }
+            });
+            return tracks;
+        };
+
+        // Get all the sessions present in the schedule.
+        self.getSessions = function () {
+            var sessions = [];
+            self.content.forEach(function (c) {
+                if (c instanceof Session) {
+                    sessions.push(c);
+                }
+            });
+            return sessions;
+        };
+
+        // look at all the sessions, tracks and events to find the starting date of the session
+        self.getStart = function () {
+            var startingDate = null;
+
+            self.content.forEach(function (c) {
+                if (startingDate === null) {
+                    startingDate = c.getStart();
+                } else if (startingDate - c.getStart() > 0) {
+                    startingDate = c.getStart();
+                }
+            });
+
+            return startingDate;
+        };
+
+        // look at all the sessions, tracks and events to find the ending date of the schedule
+        self.getEnd = function () {
+            var endingDate = null;
+
+            self.content.forEach(function (c) {
+                if (endingDate === null) {
+                    endingDate = c.getEnd();
+                } else if (endingDate - c.getEnd() < 0) {
+                    endingDate = c.getEnd();
+                }
+            });
+
+            return endingDate;
+        };
+    }
+
+    /*
+     * Check whether the tow dates are on the same date.
+     */
+    Schedule.isSameDate = function (firstDate, secondDate) {
+        if (firstDate !== null && secondDate !== null && firstDate !== undefined && secondDate !== undefined) {
+            return firstDate.getFullYear() == secondDate.getFullYear()
+                && firstDate.getMonth() == secondDate.getMonth()
+                && firstDate.getDate() == secondDate.getDate();
+        }
+        return false;
+    };
+
+    /*
+     * Check whether the specified date is during the specified timespan.
+     * This is checked on basis of the date, hours and smaller time units are not
+     * taken into account.
+     */
+    Schedule.isIntermediateDate = function (start, end, date) {
+        if (start !== null && end !== null && date !== null
+            && start !== undefined && end !== undefined && date !== undefined) {
+            var startDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+            var endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+            var dateDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            return startDate - dateDate <= 0 && endDate - dateDate >= 0;
+        }
+        return false;
+    };
+
+    /*
+     * Actually the data is an array of objects but since fromArray() is used in another context,
+     * I guess it is ok to use this term instead.
+     */
+    Schedule.fromObject = function (scheduleObject) {
+        var content = [];
+
+        scheduleObject.forEach(function(entry) {
+            if (entry.hasOwnProperty("tracks")) {
+                // only sessions have this property
+                var session = Session.fromObject(entry);
+                session.splitByDays().forEach(function (s) {
+                    content.push(s);
+                });
+            } else if (entry.hasOwnProperty("events")) {
+                // only tracks have this property
+                var track = Track.fromObject(entry);
+                track.splitByDays().forEach(function (t) {
+                    content.push(t);
+                });
+            } else {
+                // all the rest are simply events
+                content.push(Event.fromObject(entry));
+            }
+        });
+
+        return new Schedule(content);
+    };
+
     return {
         Conference: Conference,
         Author: Author,
@@ -1240,6 +1786,11 @@ define(["lib/tools", "lib/accessors",  "moment", "knockout"], function(tools, ac
         ObservableAbstract: ObservableAbstract,
         ObservableAccount: ObservableAccount,
         AbstractGroup: AbstractGroup,
-        ObservableAbstractGroup:ObservableAbstractGroup
+        ObservableAbstractGroup: ObservableAbstractGroup,
+        Schedule: Schedule,
+        Event: Event,
+        Track: Track,
+        Session: Session,
+        SchedulerEvent: SchedulerEvent
     };
 });

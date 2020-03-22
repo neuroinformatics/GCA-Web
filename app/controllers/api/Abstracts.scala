@@ -51,7 +51,10 @@ extends Silhouette[Login, CachedCookieAuthenticator] {
 
   def resultWithETag[A](abstracts: Seq[Abstract])(implicit request: Request[A]) = {
     val theirs = request.headers.get("If-None-Match")
-    val eTag = abstracts.map(_.eTag).reduce((a, b) => DigestUtils.md5Hex(a + b))
+    var eTag = DigestUtils.md5Hex("empty")
+    if (!abstracts.isEmpty) {
+      eTag = abstracts.map(_.eTag).reduce((a, b) => DigestUtils.md5Hex(a + b))
+    }
 
     if (theirs.contains(eTag)) {
       NotModified
@@ -100,6 +103,17 @@ extends Silhouette[Login, CachedCookieAuthenticator] {
     resultWithETag(ownAbstracts)
   }
 
+  /**
+    * List all favourite abstracts for a given user.
+    *
+    * replace Own by Favourite
+    *
+    * @return All (accessible) abstracts for a given user.
+    */
+  def listFavByAccount(id: String) = SecuredAction { implicit request =>
+    val favAbstracts = abstractService.listFavourite(request.identity.account)
+    resultWithETag(favAbstracts)
+  }
 
   /**
    * List all abstracts for a given conference and a given user
@@ -108,11 +122,35 @@ extends Silhouette[Login, CachedCookieAuthenticator] {
    */
   def listOwn(conferenceId: String) = SecuredAction { implicit request =>
 
-  val conference = conferenceService.get(conferenceId)
-  val abstracts = abstractService.listOwn(conference, request.identity.account)
+    val conference = conferenceService.get(conferenceId)
+    val abstracts = abstractService.listOwn(conference, request.identity.account)
 
-  resultWithETag(abstracts)
-}
+    resultWithETag(abstracts)
+  }
+
+  /**
+    * List all favourite abstracts for a given conference and a given user
+    *
+    * @return All (accessible) favourite abstracts for a given user.
+    */
+  def listFavByConf(conferenceId: String) = SecuredAction { implicit request =>
+    val conference = conferenceService.get(conferenceId)
+    val abstracts = abstractService.listFavourite(conference, request.identity.account)
+    resultWithETag(abstracts)
+  }
+
+  /**
+    * List all favourite abstracts for a given conference and a given user
+    *
+    * @return All (accessible) favourite abstracts for a given user.
+    */
+  def listFavUuidByConf(conferenceId: String) = SecuredAction { implicit request =>
+    val conference = conferenceService.get(conferenceId)
+    val abstracts = abstractService.listIsFavourite(conference, request.identity.account)
+    Ok(Json.toJson(
+      for (abs <- abstracts) yield abs.uuid
+    ))
+  }
 
   /**
    * An abstract info by id.
@@ -214,6 +252,40 @@ extends Silhouette[Login, CachedCookieAuthenticator] {
     Ok(JsArray(
       for (acc <- owners) yield accountFormat.writes(acc)
     ))
+  }
+
+  /**
+    * Get favourite users of the abstract.
+    *
+    * @return a list of updated permissions (accounts) as JSON
+    */
+  def favouriteUsers(id: String) = SecuredAction { implicit request =>
+    val abstr = abstractService.getFav(id, request.identity.account)
+    val favUsers = abstractService.getFavouriteUsers(abstr, request.identity.account)
+    Ok(JsArray(
+      for (acc <- favUsers) yield accountFormat.writes(acc)
+    ))
+  }
+
+  /**
+    * Add the logged in user to the favourite users list of an abstract.
+    *
+    * @return The id of the updated Abstract as JSON
+    */
+  def addFavUser(id: String) = SecuredAction { implicit request =>
+    val abstr = abstractService.get(id)
+    abstractService.addFavUser(abstr, request.identity.account)
+    Ok(Json.toJson(id))
+  }
+  /**
+    * Remove the logged in user from the favourite users list of an abstract.
+    *
+    * @return The id of the updated Abstract as JSON
+    */
+  def removeFavUser(id: String) = SecuredAction { implicit request =>
+    val abstr = abstractService.get(id)
+    abstractService.removeFavUser(abstr, request.identity.account)
+    Ok(Json.toJson(id))
   }
 
   def listState(id: String) = SecuredAction { implicit request =>

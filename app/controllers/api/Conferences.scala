@@ -66,12 +66,27 @@ class Conferences(implicit val env: Environment[Login, CachedCookieAuthenticator
    * List all available conferences for which the current user is an owner
    * of at least an abstract
    *
-   * @return Ok with all conferences publicly available.
+   * @return Ok with all conferences publicly available. / empty string to circumvent error message
    */
   def listWithOwnAbstracts =  SecuredAction { implicit request =>
     val conferences = conferenceService.listWithAbstractsOfAccount(request.identity.account)
     if (conferences.length==0) {
-      BadRequest("You have created no abstracts yet")
+      Ok(Json.toJson(""))
+    } else {
+      resultWithETag(conferences)
+    }
+  }
+
+  /**
+    * List all available conferences for which the current user is an owner
+    * of at least an abstract
+    *
+    * @return Ok with all conferences publicly available.
+    */
+  def listWithFavAbstracts =  SecuredAction { implicit request =>
+    val conferences = conferenceService.listWithFavouriteAbstractsOfAccount(request.identity.account)
+    if (conferences.length==0) {
+      BadRequest("No favourite abstracts")
     } else {
       resultWithETag(conferences)
     }
@@ -172,12 +187,18 @@ class Conferences(implicit val env: Environment[Login, CachedCookieAuthenticator
     * @param id Conference id of the required geo entry.
     * @return OK | NotFound
     */
-  def getGeo(id: String) = SecuredAction { implicit request =>
+  def getGeo(id: String) = UserAwareAction { implicit request =>
     val geo = conferenceService.get(id).geo
     if (geo == null) {
       NotFound(Json.obj("message" -> "Geo entry not found."))
     } else {
-      Ok(Json.parse(geo))
+      val theirs = request.headers.get("If-None-Match")
+      val eTag = DigestUtils.md5Hex(geo)
+      if (theirs.contains(eTag)) {
+        NotModified
+      } else {
+        Ok(Json.parse(geo)).withHeaders(ETAG -> eTag)
+      }
     }
   }
 
@@ -200,12 +221,18 @@ class Conferences(implicit val env: Environment[Login, CachedCookieAuthenticator
     * @param id Conference id of the required schedule entry.
     * @return OK | NotFound
     */
-  def getSchedule(id: String) = SecuredAction { implicit request =>
+  def getSchedule(id: String) = UserAwareAction { implicit request =>
     val schedule = conferenceService.get(id).schedule
     if (schedule == null) {
       NotFound(Json.obj("message" -> "Schedule entry not found."))
     } else {
-      Ok(Json.parse(schedule))
+      val theirs = request.headers.get("If-None-Match")
+      val eTag = DigestUtils.md5Hex(schedule)
+      if (theirs.contains(eTag)) {
+        NotModified
+      } else {
+        Ok(Json.parse(schedule)).withHeaders(ETAG -> eTag)
+      }
     }
   }
 
@@ -227,12 +254,18 @@ class Conferences(implicit val env: Environment[Login, CachedCookieAuthenticator
     * @param id Conference id of the required info entry.
     * @return OK | NotFound
     */
-  def getInfo(id: String) = SecuredAction { implicit request =>
+  def getInfo(id: String) = UserAwareAction { implicit request =>
     val info = conferenceService.get(id).info
     if (info == null) {
       NotFound(Json.obj("message" -> "Info entry not found."))
     } else {
-      Ok(info)
+      val theirs = request.headers.get("If-None-Match")
+      val eTag = DigestUtils.md5Hex(info)
+      if (theirs.contains(eTag)) {
+        NotModified
+      } else {
+        Ok(info).withHeaders(ETAG -> eTag)
+      }
     }
   }
 

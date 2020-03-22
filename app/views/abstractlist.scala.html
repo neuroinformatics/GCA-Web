@@ -4,10 +4,11 @@
 
     <div class="hidden-data">
         <div id="conference-uuid">@conference.uuid</div>
+        <div id="logged-in">@if(account.isDefined) {"true"} else {"false"}</div>
     </div>
 
-    <script data-main="@routes.Assets.at("javascripts/abstract-list.js")"
-            src="@routes.Assets.at("javascripts/require.js")"></script>
+    <script data-main='@routes.Assets.at("javascripts/abstract-list.js")'
+            src='@routes.Assets.at("javascripts/require.js")'></script>
 
     <!-- Loading box -->
     <div data-bind="if: isLoading">
@@ -30,8 +31,18 @@
         <!-- /ko -->
     </div>
 
+    <!-- Success message box; for unknown reason the css level is not properly updated; keep until resolved -->
+    <div data-bind="visible: messageSuccess">
+        <!-- ko with: messageSuccess -->
+        <div class="alert alert-info fade in alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <strong data-bind="html: message"></strong>
+        </div>
+        <!-- /ko -->
+    </div>
+
     <div class="page-header">
-        <h1><a href="@conference.link">@conference.name</a></h1>
+        <h1><a data-bind="attr: {href: $root.localConferenceLink}">@conference.name</a></h1>
     </div>
 
     <div>
@@ -48,6 +59,9 @@
             <div class="abstract">
                 <div class="sortId" data-bind="html: $parent.makeAbstractID($data)"></div>
                 <div class="box">
+                    @if(account.isDefined) {
+                        <div class="pull-right" data-bind="visible: $parent.favs()[$index()]">&#9733</div>
+                    }
                     <h4 class="list-group-item-heading" data-bind="text: title"></h4>
                     <div class="list-group-item-text">
                         <ul class="authors" data-bind="foreach: authors">
@@ -72,6 +86,22 @@
                <span data-bind="html: formatSortId($parent.sortId)"></span>
                <!-- /ko -->
             </li>
+
+            @if(account.isDefined) {
+                <li data-bind="visible: !$root.isFavouriteAbstract()">
+                    <a class="favour gn-tooltip" data-bind="click: $root.favourAbstract" href="">
+                        &#9733
+                        <span class="gn-tooltiptext">Add abstract to favourites</span>
+                    </a>
+                </li>
+                <li data-bind="visible: $root.isFavouriteAbstract()">
+                    <a class="disfavour gn-tooltip" data-bind="click: $root.disfavourAbstract" href="">
+                        &#9733
+                        <span class="gn-tooltiptext">Remove abstract from favourites</span>
+                    </a>
+                </li>
+            }
+
             <li class="next" data-bind="css: { disabled: $parent.nextAbstract($data) == null }">
                 <a data-bind="attr: {href : $parent.nextAbstract($data)}">Next &rarr;</a>
             </li>
@@ -79,6 +109,5 @@
     } {
         <!-- footer -->
     }
-
     </div> <!-- KO !flickerbox -->
 }

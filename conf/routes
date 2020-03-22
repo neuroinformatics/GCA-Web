@@ -5,6 +5,7 @@ GET           /                                               @controllers.Appli
 GET           /contact                                        @controllers.Application.contact
 GET           /impressum                                      @controllers.Application.impressum
 GET           /about                                          @controllers.Application.about
+GET           /datenschutz                                    @controllers.Application.datenschutz
 
 GET           /dashboard/conference                           @controllers.Application.createConference()
 GET           /dashboard/conference/:id                       @controllers.Application.adminConference(id: String)
@@ -14,8 +15,12 @@ GET           /dashboard/accounts                             @controllers.Appli
 GET           /conferences                                    @controllers.Application.conferences
 GET           /conference/:id                                 @controllers.Application.conference(id: String)
 GET           /conference/:id/submission                      @controllers.Application.submission(id: String)
+GET           /conference/:id/locations                       @controllers.Application.locations(id: String)
+GET           /conference/:id/floorplans                      @controllers.Application.floorplans(id: String)
 GET           /conference/:id/abstracts                       @controllers.Application.abstractsPublic(id: String)
+GET           /conference/:id/schedule                        @controllers.Application.schedule(id: String)
 GET           /myabstracts                                    @controllers.Application.abstractsPrivate
+GET           /favouriteabstracts                             @controllers.Application.abstractsFavourite
 GET           /myabstracts/:id/edit                           @controllers.Application.edit(id: String)
 GET           /submitted                                      @controllers.Application.abstractsPending
 
@@ -24,6 +29,10 @@ GET           /abstracts/:id                                  @controllers.Appli
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                                   controllers.Assets.at(path="/public", file)
+GET           /manifest.json                                  controllers.Assets.at(path="/public", file="manifest.json")
+GET           /manifest/*file                                 controllers.Assets.at(path="/public", file)
+GET           /service-worker.js                              controllers.Assets.at(path="/public", file="service-worker.js")
+GET           /cache/mobcache.appcache                        @controllers.Application.createAppCacheManifest
 
 # API ------------------------------------------------------------------------------------------------------------------
 # Conference interface
@@ -53,11 +62,15 @@ POST          /api/abstracts/:id/figures                      @controllers.api.F
 GET           /api/abstracts/:id/figures                      @controllers.api.Figures.list(id: String)
 PUT           /api/abstracts/:id/owners                       @controllers.api.Abstracts.setPermissions(id: String)
 GET           /api/abstracts/:id/owners                       @controllers.api.Abstracts.getPermissions(id: String)
+GET           /api/abstracts/:id/favusers                     @controllers.api.Abstracts.favouriteUsers(id: String)
+PUT           /api/abstracts/:id/addfavuser                   @controllers.api.Abstracts.addFavUser(id: String)
+DELETE        /api/abstracts/:id/removefavuser                @controllers.api.Abstracts.removeFavUser(id: String)
 GET           /api/abstracts/:id/stateLog                     @controllers.api.Abstracts.listState(id: String)
 PUT           /api/abstracts/:id/state                        @controllers.api.Abstracts.setState(id: String)
 
 # Figure interface
 GET           /api/figures/:id/image                          @controllers.api.Figures.download(id: String)
+GET           /api/figures/:id/imagemobile                    @controllers.api.Figures.downloadmobile(id: String)
 PUT           /api/figures/:id                                @controllers.api.Figures.updateFigure(id: String)
 DELETE        /api/figures/:id                                @controllers.api.Figures.delete(id: String)
 
@@ -68,8 +81,12 @@ DELETE        /api/figures/:id                                @controllers.api.F
 GET           /api/users                                      @controllers.api.Accounts.accountsByEmail(email: String)
 GET           /api/user/list                                  @controllers.api.Accounts.listAccounts()
 GET           /api/user/:id/abstracts                         @controllers.api.Abstracts.listByAccount(id: String)
+GET           /api/user/:id/favouriteabstracts                @controllers.api.Abstracts.listFavByAccount(id: String)
 GET           /api/user/self/conferences/:id/abstracts        @controllers.api.Abstracts.listOwn(id: String)
+GET           /api/user/self/conferences/:id/favouriteabstracts        @controllers.api.Abstracts.listFavByConf(id: String)
+GET           /api/user/self/conferences/:id/favabstractuuids       @controllers.api.Abstracts.listFavUuidByConf(id: String)
 GET           /api/user/self/conferences                      @controllers.api.Conferences.listWithOwnAbstracts
+GET           /api/user/self/conffavouriteabstracts           @controllers.api.Conferences.listWithFavAbstracts
 
 
 # Auth -----------------------------------------------------------------------------------------------------------------
@@ -89,3 +106,8 @@ GET           /forgotpassword                                 @controllers.Accou
 POST          /forgotpassword                                 @controllers.Accounts.forgotPasswordCommit
 GET           /mail                                           @controllers.Accounts.emailchange
 POST          /mail                                           @controllers.Accounts.emailchangeCommit
+
+# Mobile ---------------------------------------------------------------------------------------------------------------
+
+GET            /mob/conferences                               @controllers.Mobile.Conferences
+GET            /mob/conference/:id                            @controllers.Mobile.Conference(id: String)

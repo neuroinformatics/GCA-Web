@@ -3,6 +3,7 @@
 @import "@{customPath}_colors";
 @import "@{customPath}_font";
 @import "@{customPath}_classes";
+@import "@{customPath}_classes_conference_scheduler";
 
 html {
   position: relative;
@@ -160,6 +161,18 @@ body {
         vertical-align: middle;
       }
     }
+  }
+
+  .favour{
+    color: @color-dark-gray-dark !important;
+    background-color: white !important;
+    border-radius: 4px;
+  }
+
+  .disfavour{
+    color: rgb(184, 134, 11);
+    background-color: rgb(255, 250, 120);
+    border-radius: 4px;
   }
 
   .abstract-text {
@@ -391,10 +404,44 @@ body {
   font-size: 29px;
 }
 
+.jumbotron p.paragraph-small {
+  font-size: 14px;
+}
+
 .jumbotron p {
   font-size: 18px;
 }
 
 .tab-content {
   margin-top: 10px;
+}
+
+ /* Tooltip container */
+.gn-tooltip {
+  color: black;
+}
+
+/* Tooltip text */
+.gn-tooltip .gn-tooltiptext {
+  visibility: hidden;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px;
+  border-radius: 5px;
+
+  /* Position the tooltip text */
+  position: fixed;
+  z-index: 1;
+  margin-top: -60px;
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.gn-tooltip:hover .gn-tooltiptext {
+  visibility: visible;
+  opacity: 1;
 }
