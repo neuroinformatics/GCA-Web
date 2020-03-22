@@ -41,7 +41,7 @@ require(["lib/models", "lib/tools", "lib/owned", "knockout", "ko.sortable", "dat
                 }
 
                 var $el = $(element);
-                var options = { onSelect: onSelectHandler };
+                var options = { onSelect: onSelectHandler, timezone: "0" };
 
                 $el.datetimepicker(options);
 
