@@ -22,7 +22,7 @@ define(["lib/tools"], function (tools) {
             author,
             should("firstName", notNothing, "Author is missing a first name"),
             should("lastName", notNothing, "Author is missing a last name"),
-            should("mail", notNothing, "Author is missing an email"),
+            /* should("mail", notNothing, "Author is missing an email"), */
             should("affiliations", notEmpty, "Author has no affiliations")
         );
     }

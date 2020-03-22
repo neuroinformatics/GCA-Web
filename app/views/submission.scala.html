@@ -2,6 +2,9 @@
 
 @template(Option(account), Option(conference), "submission") {
 
+    <!-- NIJC: add custom javascript -->
+    <script src="/custom/submission.js"></script>
+
     <div class="hidden-data">
         <div id="conference-uuid">@conference.uuid</div>
         <div id="abstract_uuid">@abstr.map(_.uuid).getOrElse("")</div>
@@ -486,7 +489,9 @@
                     Quick guide
                 </a>
             </span>
-            <br>
+            <div class="tex2jax_ignore" style="margin:0 0 5px 10px;font-size: 85%;">
+                For example, equation such as $text$ will make text font italic, O$_{2}$ will make 2 a subscript, and Ca$^{2+}$ will make 2+ a superscript.
+            </div>
             <span data-bind="if: showAbstractTextCharsLeft">Characters left: </span>
             <span data-bind="text: editorTextCharactersLeft"></span>
         </div>
