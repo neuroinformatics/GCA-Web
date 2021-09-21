@@ -9,8 +9,6 @@ scalaVersion := "2.11.12"
 
 resolvers += "new maven" at "https://repo1.maven.org/maven2/"
 
-resolvers += "new maven" at "https://repo1.maven.org/maven2/"
-
 libraryDependencies ++= Seq(
   jdbc,
   anorm,

@@ -61,7 +61,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Conference Abstracts">
     <meta name="keywords" content="Abstracts">
-    <meta name="author" content="Japanese Neuroinformatics Node (J-Node)">
+    <meta name="author" content="INCF Japan Node (J-Node)">
 
     <!-- mobile webapp support -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -117,7 +117,7 @@
                             }
 
                             @if(conference.isEmpty && active) {
-                                @if(!active.toLowerCase == "my abstracts" && !active.toLowerCase == "my favourites") {
+                                @if(!(active.toLowerCase == "my abstracts") && !(active.toLowerCase == "my favourites")) {
                                     <li class="active"><a>@active</a></li>
                                 }
                             }
@@ -266,8 +266,8 @@
                 </div>
                 <div class="pull-right">
                     <p>The J-Node Abstract System &mdash; ©
-                        <a href="https://www.neuroinf.jp">INCF Japan Node</a> 2017-
-                        <script>document.write(new Date().getFullYear());</script>
+                        2017-<script>document.write(new Date().getFullYear());</script>
+                        <a href="https://www.neuroinf.jp/">INCF Japan Node</a>,
                         powered by <a href="https://github.com/G-Node/GCA-Web">GCA-Web</a></p></div>
                     </p>
                 </div>

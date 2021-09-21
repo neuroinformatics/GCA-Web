@@ -21,7 +21,7 @@
                    Adrian Stoewer <adrian.stoewer@@rz.ifi.lmu.de>
 
     -->
-    <title>@conference.map(_.name).getOrElse("G-Node Conference Application Suite")</title>
+    <title>@conference.map(_.name).getOrElse("J-Node Abstract System")</title>
 
     <link rel="stylesheet" href="@routes.Assets.at("stylesheets/g-node-bootstrap.play.css")" />
     <script type="text/javascript" src="@routes.Assets.at("lib/jquery/jquery.min.js")"></script>
@@ -33,7 +33,7 @@
 
     <!-- project stylesheet -->
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/layout.css")">
-    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+    <link rel="shortcut icon" type="image/x-icon" href="@routes.Assets.at("images/favicon.ico")">
 
     <!-- Timepicker for jQuery -->
     <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.1/jquery-ui-timepicker-addon.min.css">
@@ -46,7 +46,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Conference Abstracts">
     <meta name="keywords" content="Abstracts">
-    <meta name="author" content="German Neuroinformatics Node (G-Node)">
+    <meta name="author" content="INCF Japan Node (J-Node)">
 
     <!-- smart app banner -->
     @conference.map { conf =>
@@ -193,14 +193,12 @@
                     <ul class="list-inline">
                         <li><a href="@routes.Application.about">About</a></li>
                         <li><a href="@routes.Application.contact">Contact</a></li>
-                        <li><a href="@routes.Application.impressum">Imprint</a></li>
-                        <li><a href="@routes.Application.datenschutz">Datenschutz</a></li>
                     </ul>
                 </div>
                 <div class="pull-right">
-                    <p>The G-Node Conference Site &mdash; ©
-                        <a href="http://www.g-node.org">G-Node</a> 2013-
-                        <script>document.write(new Date().getFullYear());</script>
+                    <p>The J-Node Abstract System &mdash; ©
+                        2017-<script>document.write(new Date().getFullYear());</script>
+                        <a href="https://www.neuroinf.jp">INCF Japan Node</a>
                     </p>
                 </div>
             </div>
