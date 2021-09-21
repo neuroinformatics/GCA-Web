@@ -31,6 +31,10 @@
     <link rel="stylesheet" href='@routes.Assets.at("lib/jquery-ui/jquery-ui.min.css")' />
     <script type="text/javascript" src='@routes.Assets.at("lib/bootstrap/js/bootstrap.min.js")'></script>
 
+    <!-- Print view specific stylesheet -->
+    <link rel="stylesheet" type="text/css" media="print"
+          href='@routes.Assets.at("stylesheets/g-node-bootstrap-print.play.css")' />
+
     <!-- project fonts -->
     <link href='//fonts.googleapis.com/css?family=EB+Garamond|Open+Sans' rel='stylesheet' type='text/css'>
 
@@ -240,6 +244,14 @@
 
     <!-- main content -->
     <div class="container main-content">
+
+    @conference.map { conf =>
+        @if(conf.getConfTextAsHTML("notice") != null && conf.getConfTextAsHTML("notice") != "") {
+            <div class="jumbotron">
+            @Html(conf.getConfTextAsHTML("notice"))
+            </div>
+        }
+    }
     @content
     </div>
 
@@ -252,7 +264,13 @@
                         <li><a href="@routes.Application.contact">Contact</a></li>
                     </ul>
                 </div>
-                <div class="pull-right"><p>The J-Node Abstract System &mdash; © <a href="https://www.neuroinf.jp">INCF Japan Node</a> 2019, powered by <a href="https://github.com/G-Node/GCA-Web">GCA-Web</a></p></div>
+                <div class="pull-right">
+                    <p>The J-Node Abstract System &mdash; ©
+                        <a href="https://www.neuroinf.jp">INCF Japan Node</a> 2017-
+                        <script>document.write(new Date().getFullYear());</script>
+                        powered by <a href="https://github.com/G-Node/GCA-Web">GCA-Web</a></p></div>
+                    </p>
+                </div>
             </div>
         </div>
     </div>

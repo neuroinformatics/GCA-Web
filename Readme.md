@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.org/G-Node/GCA-Web.png?branch=master)](https://travis-ci.org/G-Node/GCA-Web)
 [![Docker Automated build](https://img.shields.io/docker/automated/gnode/gca.svg)](https://hub.docker.com/r/gnode/gca/builds)
 [![StackShare](https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat)](https://stackshare.io/cgars/gca-web)
 
@@ -24,3 +23,9 @@ The current version is stable.
 A previous version of the application can be found in the "oldstable" branch.
 
 Please find the latest release notes in the [release section](https://github.com/G-Node/GCA-Web/releases).
+
+
+## Frontend tests using Selenium
+
+The application suite provides frontend test using Selenium. A full setup and usage description can be found in the
+[frontend test readme](./test/frontend/Readme.md).
