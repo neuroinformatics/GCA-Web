@@ -7,6 +7,8 @@ lazy val `GCA-Web`: Project = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.11.12"
 
+resolvers += "new maven" at "https://repo1.maven.org/maven2/"
+
 libraryDependencies ++= Seq(
   jdbc,
   anorm,

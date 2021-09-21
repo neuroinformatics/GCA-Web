@@ -2,7 +2,9 @@
 logLevel := Level.Warn
 
 // The Typesafe repository
-resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
+resolvers ++= Seq("Typesafe repository" at "https://repo.typesafe.com/typesafe/releases/",
+                  "new maven" at "https://repo1.maven.org/maven2/")
+
 
 // The Play plugin
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.10")
