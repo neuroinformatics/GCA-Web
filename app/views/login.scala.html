@@ -4,36 +4,38 @@
 
 @template(None, None, "") {
 
-  @flash(request)
+@flash(request)
 
-  <fieldset class="col-md-6 col-md-offset-3">
-    <legend>Sign in</legend>
+<div class="row justify-content-center">
+  <fieldset class="col-md-7">
+    <legend class="mb-3">Sign in</legend>
 
     @helper.form(action = routes.Authentication.authenticate("credentials")) {
 
-      @text(form("identifier"), "Email", icon = "at")
-      @password(form("password"), "Password", icon = "key")
+    @text(form("identifier"), "Email", icon = "at")
+    @password(form("password"), "Password", icon = "key")
 
-      <!-- Provide redirection after login from landing page /conferences -->
-      <script>
-        var ref = document.referrer;
-        if (ref !== null && ref !== undefined && ref.includes(window.location.hostname) && !ref.includes("/login")) {
-          window.sessionStorage.setItem("gca_ref", ref);
-        }
-      </script>
+    <!-- Provide redirection after login from landing page /conferences -->
+    <script>
+      var ref = document.referrer;
+      if (ref !== null && ref !== undefined && ref.includes(window.location.hostname) && !ref.includes("/login")) {
+        window.sessionStorage.setItem("gca_ref", ref);
+      }
+    </script>
 
-      <div class="form-group">
-        <a href="@routes.Accounts.forgotPasswordPage()">Forgot password?</a>
-        or
-        <a href="@routes.Accounts.signUp()">Create a new account</a>
+    <div class="mb-3">
+      <a href="@routes.Accounts.forgotPasswordPage()">Forgot password?</a>
+      or
+      <a href="@routes.Accounts.signUp()">Create a new account</a>
+    </div>
+
+    <div class="mb-3">
+      <div class="d-grid">
+        <button id="submit" type="submit" value="submit" class="btn btn-lg btn-primary">Sign in</button>
       </div>
-
-      <div class="form-group">
-        <div>
-          <button id="submit" type="submit" value="submit" class="btn btn-lg btn-primary btn-block">Sign in</button>
-        </div>
-      </div>
+    </div>
     }
   </fieldset>
+</div>
 
 }

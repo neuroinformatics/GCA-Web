@@ -2,453 +2,374 @@
 
 @template(Some(account), conference, "conference") {
 
-    <div class="hidden-data">
-        <div id="conference-uuid">@conference.map(_.uuid).getOrElse("")</div>
-        <div id="account-uuid"> @account.uuid</div>
+<div class="hidden-data">
+  <div id="conference-uuid">@conference.map(_.uuid).getOrElse("")</div>
+  <div id="account-uuid"> @account.uuid</div>
+</div>
+
+<script data-main='@routes.Assets.at("javascripts/admin-conference.js")' src='@routes.Assets.at("lib/requirejs/require.min.js")'></script>
+
+<!-- ko if: isLoading -->
+<div class="alert alert-info fade show" role="alert">
+  <h4 data-bind="text: isLoading">Loading data</h4>
+  <p>Please wait...</p>
+</div>
+<!-- /ko -->
+
+<div class="admin-conference" style="display: none" data-bind="visible: true">
+
+  <!-- Error message box -->
+  <div data-bind="visible: error">
+    <!-- ko with: error -->
+    <div class="alert alert-dismissible fade show" data-bind="css: level" role="alert">
+      <strong data-bind="html: message"></strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+    <!-- /ko -->
+  </div>
 
-    <script data-main='@routes.Assets.at("javascripts/admin-conference.js")'
-    src='@routes.Assets.at("javascripts/require.js")'></script>
+  <!-- The conference info page -->
 
-    <!-- Loading box -->
-    <div data-bind="if: isLoading">
-        <div class="alert alert-info fade in out">
-            <h4 data-bind="text: isLoading">Loading data</h4>
-            <p>Please wait...</p>
-        </div>
-    </div>
+  <div class="page-header">
+    <h2>Admin Panel</h2>
+  </div>
 
-    <!-- Knockout non-flicker  -->
-    <div style="display: none" data-bind="visible: true">
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item" role="presentation"><a class="nav-link active" href="#general" aria-controls="general" role="tab" data-bs-toggle="tab">General</a></li>
+    <!-- ko if: isConferenceSaved  -->
+    <li class="nav-item" role="presentation"><a class="nav-link" href="#groups" aria-controls="groups" role="tab" data-bs-toggle="tab">Groups</a></li>
+    <li class="nav-item" role="presentation"><a class="nav-link" href="#geo" aria-controls="geo" role="tab" data-bs-toggle="tab">Maps</a></li>
+    <li class="nav-item" role="presentation"><a class="nav-link" href="#schedule" aria-controls="schedule" role="tab" data-bs-toggle="tab">Schedule</a></li>
+    <li class="nav-item" role="presentation"><a class="nav-link" href="#info" aria-controls="info" role="tab" data-bs-toggle="tab">Info text</a></li>
+    <li class="nav-item" role="presentation"><a class="nav-link" href="#owner" aria-controls="owner" role="tab" data-bs-toggle="tab">Owner</a></li>
+    <!-- /ko -->
+  </ul>
 
-            <!-- Error message box -->
-        <div data-bind="visible: error">
-                <!-- ko with: error -->
-            <div class="alert fade in alert-dismissable" data-bind="css: level">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <strong data-bind="html: message"></strong>
-            </div>
-                <!-- /ko -->
-        </div>
+  <div class="tab-content">
 
-            <!-- The conference info page -->
+    <!-- general -->
+    <div data-bind="with: conference" role="tabpanel" class="tab-pane active" id="general">
+      <form class="admin-form" role="form">
 
-        <div class="page-header">
-            <h2>Admin Panel</h2>
-        </div>
-
-        <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#general" aria-controls="general" role="tab" data-toggle="tab">General</a></li>
-            <!-- ko if:$root.isConferenceSaved  -->
-            <li role="presentation"><a href="#groups" aria-controls="groups" role="tab" data-toggle="tab">Groups</a></li>
-            <li role="presentation"><a href="#geo" aria-controls="geo" role="tab" data-toggle="tab">Maps</a></li>
-            <li role="presentation"><a href="#schedule" aria-controls="schedule" role="tab" data-toggle="tab">Schedule</a></li>
-            <li role="presentation"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">Info text</a></li>
-            <li role="presentation"><a href="#owner" aria-controls="owner" role="tab" data-toggle="tab">Owner</a></li>
-            <!-- /ko -->
-        </ul>
-
-      <div class="tab-content">
-
-        <!-- general -->
-        <div data-bind="with: conference" role="tabpanel" class="tab-pane active" id="general">
-            <form class="form-horizontal admin-form" role="form">
-
-                <div class="form-group">
-                    <label for="submission" class="col-sm-2 control-label">Submission</label>
-                    <div class="col-sm-10">
-                        <input type="checkbox" class="form-control" id="submission" name="submission"
-                               data-bind="checked: isOpen, valueUpdate: 'afterkeydown', click: $root.changeHandler">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="published" class="col-sm-2 control-label">Published</label>
-                    <div class="col-sm-10">
-                        <input type="checkbox" class="form-control" id="published" name="published"
-                               data-bind="checked: isPublished, valueUpdate: 'afterkeydown', click: $root.changeHandler">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="active" class="col-sm-2 control-label">Active</label>
-                    <div class="col-sm-10">
-                        <input type="checkbox" class="form-control" id="active" name="active"
-                               data-bind="checked: isActive, valueUpdate: 'afterkeydown', click: $root.changeHandler">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="name" class="col-sm-2 control-label">Name</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="name"
-                                placeholder="Name" data-bind="value: name, valueUpdate: 'afterkeydown'"
-                                maxlength='@Model.getLimit[Conference]("name")'>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="short" class="col-sm-2 control-label">Short</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="short"
-                                placeholder="Short name" data-bind="value: short, valueUpdate: 'afterkeydown'"
-                                maxlength='Model.getLimit[Conference]("short")'>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="group" class="col-sm-2 control-label">Group</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="group"
-                        placeholder="The conference group" data-bind="value: group, valueUpdate: 'afterkeydown'"
-                        maxlength='@Model.getLimit[Conference]("group")'>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="cite" class="col-sm-2 control-label">Cite</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="cite"
-                                placeholder="Cite text" data-bind="value: cite, valueUpdate: 'afterkeydown'"
-                                maxlength='@Model.getLimit[Conference]("cite")'>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="start" class="col-sm-2 control-label">Start</label>
-                    <div class="col-sm-10">
-                        <input type="datetime" class="form-control" id="start"
-                                placeholder="Start date" data-bind="datetimepicker: start">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="end" class="col-sm-2 control-label">End</label>
-                    <div class="col-sm-10">
-                        <input type="datetime" class="form-control" id="end"
-                                placeholder="End date" data-bind="datetimepicker: end">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="deadline" class="col-sm-2 control-label">Deadline</label>
-                    <div class="col-sm-10">
-                        <input type="datetime" class="form-control" id="deadline"
-                                placeholder="Abstract submission deadline" data-bind="datetimepicker: deadline">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="logo-file" class="col-sm-2 control-label">Logo File</label>
-                    <div class="col-sm-10">
-                        <div data-bind="ifnot: $root.logo()">
-                            <div>Images of format "jpg", "gif", "png" are supported; the size limit is 5MB.</div>
-                            <input type="file" name="logo-file" id="logo-file"
-                            data-bind="event: { change: $root.getNewBanner }, enable: $root.isConferenceSaved"
-                            maxlength="250" class="form-control">
-                            <div data-bind="ifnot: $root.isConferenceSaved">
-                                Note: The image will be uploaded when the conference is saved.
-                            </div>
-                        </div>
-
-                        <div data-bind="if: $root.logo()">
-                            <button type="button" name="remove-logo" class="btn btn-default btn-sm pull-right"
-                            data-bind="click: $root.removeBanner">
-                                Remove
-                            </button>
-                            <div class="banner-box">
-                                <img class="conference-logo img-responsive img-rounded" src=""
-                                data-bind="attr: {src: $root.logo().URL}">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="logo" class="col-sm-2 control-label">Logo Link</label>
-                    <div class="col-sm-10">
-                        <input type="url" class="form-control" id="logo"
-                                placeholder="Banner Logo url"
-                                data-bind="value: $root.logoURL, valueUpdate: 'afterkeydown',
-                                event: {'keydown': $root.changeHandler}"
-                                maxlength='@Model.getLimit[ConfText]("text")'>
-                        <div>
-                            Note: If a logo image is uploaded, the logo link will not be used.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="thumbnail-file" class="col-sm-2 control-label">Thumbnail File</label>
-                    <div class="col-sm-10">
-                        <div data-bind="ifnot: $root.thumbnail()">
-                            <div>Images of format "jpg", "gif", "png" are supported; the size limit is 5MB.</div>
-                            <input type="file" name="thumbnail-file" id="thumbnail-file"
-                            data-bind="event: { change: $root.getNewBanner }, enable: $root.isConferenceSaved"
-                            maxlength="250" class="form-control">
-                            <div data-bind="ifnot: $root.isConferenceSaved">
-                                Note: The image will be uploaded when the conference is saved.
-                            </div>
-                        </div>
-
-                        <div data-bind="if: $root.thumbnail()">
-                            <button type="button" name="remove-thumbnail" class="btn btn-default btn-sm pull-right"
-                            data-bind="click: $root.removeBanner">
-                                Remove
-                            </button>
-                            <div class="banner-box">
-                                <img class="conference-logo img-responsive img-rounded" src=""
-                                data-bind="attr: {src: $root.thumbnail().URL}">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="thumbnail" class="col-sm-2 control-label">Thumbnail Link</label>
-                    <div class="col-sm-10">
-                        <input type="url" class="form-control" id="thumbnail"
-                                placeholder="Thumbnail image url"
-                                data-bind="value: $root.thumbnailURL, valueUpdate: 'afterkeydown',
-                                event: {'keydown': $root.changeHandler}"
-                                maxlength='@Model.getLimit[ConfText]("text")'>
-                        <div>
-                            Note: If a thumbnail image is uploaded, the thumbnail link will not be used.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="iosapp" class="col-sm-2 control-label">iOS App</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="iosapp"
-                                placeholder="iOS App id" data-bind="value: iOSApp, valueUpdate: 'afterkeydown'"
-                                maxlength='@Model.getLimit[Conference]("iOSApp")'>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="link" class="col-sm-2 control-label">Link</label>
-                    <div class="col-sm-10">
-                        <input type="url" class="form-control" id="link"
-                                placeholder="Link to the conference homepage"
-                                data-bind="value: link, valueUpdate: 'afterkeydown'"
-                                maxlength='@Model.getLimit[Conference]("link")'>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="desc" class="col-sm-2 control-label">Description</label>
-                    <div class="col-sm-10">
-                        <textarea class="form-control" id="desc" rows="4"
-                                placeholder='Conference description (max. @Model.getLimit[ConfText]("text") characters). Use Markdown.'
-                                data-bind="value: $root.description, valueUpdate: 'afterkeydown',
-                                event: {'keydown': $root.changeHandler}"
-                        maxlength='@Model.getLimit[ConfText]("text")'></textarea>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="notice" class="col-sm-2 control-label">Notice</label>
-                    <div class="col-sm-10">
-                        <textarea class="form-control" id="notice" rows="4"
-                        placeholder='Conference notice (max. @Model.getLimit[ConfText]("text") characters). Use Markdown.'
-                        data-bind="value: $root.notice, valueUpdate: 'afterkeydown',
-                                event: {'keydown': $root.changeHandler}"
-                        maxlength='@Model.getLimit[ConfText]("text")'></textarea>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="presentation" class="col-sm-2 control-label">Presentation Preferences</label>
-                    <div class="col-sm-10">
-                        <input type="checkbox" class="form-control" id="presentation" name="presentation"
-                               data-bind="checked: hasPresentationPrefs, valueUpdate: 'afterkeydown', click: $root.changeHandler">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="col-sm-2 text-right"><b>Topics</b></div>
-                    <ul class="col-sm-10 list-inline" data-bind="sortable: topics">
-                        <li><span class="label label-default" data-bind="text: $data"></span>
-                            <a class="btn-remove-topic" data-bind="click: $root.removeTopic">
-                                <span class="glyphicon glyphicon-remove"></span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-4">
-                        <input class="form-control" type="text" placeholder="topic" id="addTopic"
-                                maxlength='@Model.getLimit[Topic]("topic")'>
-                    </div>
-                    <div class="col-sm-1">
-                        <a id="btn-add-topic" class="btn btn-default" data-bind="click: $root.addTopic">
-                            <span class="glyphicon glyphicon-plus"></span> Add Topic</a>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="mAbsLen" class="col-sm-4">Max. Abs. Len. (<@Model.getLimit[Abstract]("text"))</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" id="mAbsLen"
-                        placeholder="Maximum Abstract Length (chars)" data-bind="value:mAbsLeng, valueUpdate:'afterkeydown', event: { keypress: $root.ensureNumerical }">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10 alert alert-danger fade in out" data-bind="visible: $root.checkmAbsLeng()">
-                        Changing to shorter abstract length causes cut-offs for already created abstracts exceeding this new length!
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="mFigs" class="col-sm-4">Max. Figs.</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" id="mFigs"
-                        placeholder="Maximum Number Of Figures" data-bind="value: mFigs, valueUpdate: 'afterkeydown', event: { keypress: $root.ensureNumerical }">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success"
-                                data-bind="click: $root.saveConference, text: $root.saveButtonText,
-                                                css { disabled: $root.saveButtonDisabled }">Save</button>
-                    </div>
-                </div>
-            </form>
+        <div class="row">
+          <label for="submission" class="col-sm-2 col-form-label">Submission</label>
+          <div class="form-check col-sm-10 align-self-center">
+            <input type="checkbox" class="form-check-input" id="submission" name="submission" data-bind="checked: isOpen, valueUpdate: 'afterkeydown', click: $root.changeHandler">
           </div>
+        </div>
 
-        <!-- groups management -->
-        <div data-bind="if: $root.isConferenceSaved" role="tabpanel" class="tab-pane" id="groups">
-            <div data-bind="with: conference">
-                <table class="table .table-condensed">
-                    <thead>
-                        <tr>
-                            <th class="col-xs-1">Prefix</th>
-                            <th class="col-xs-4">Short</th>
-                            <th class="col-xs-6">Long</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- ko foreach: groups -->
-                        <tr>
-                            <td>
-                                <input class="form-control" data-bind="value: prefix, valueUpdate: 'afterkeydown'"
-                                        type="text" maxlength='@Model.getLimit[AbstractGroup]("prefix")'>
-                            </td>
-                            <td>
-                                <input class="form-control" data-bind="value: short, valueUpdate: 'afterkeydown'"
-                                        type="text" maxlength='@Model.getLimit[AbstractGroup]("short")'>
-                            </td>
-                            <td>
-                                <input class="form-control" data-bind="value: name, valueUpdate: 'afterkeydown'"
-                                        type="text" maxlength='@Model.getLimit[AbstractGroup]("name")'>
-                            </td>
-                            <td>
-                                <button class="btn btn-danger btn-xs" data-bind="click: $root.removeGroup">
-                                    <span class="glyphicon glyphicon-remove icon-no-gap"> Remove</span>
-                                </button>
-                            </td>
-                        </tr>
-                        <!-- /ko -->
-                        <tr id="newGroup">
-                            <td>
-                                <input id="ngPrefix" class="form-control" type="text"
-                                        maxlength='@Model.getLimit[AbstractGroup]("prefix")'>
-                            </td>
-                            <td>
-                                <input id="ngShort" class="form-control" type="text"
-                                        maxlength='@Model.getLimit[AbstractGroup]("short")'>
-                            </td>
-                            <td>
-                                <input id="ngName" class="form-control" type="text"
-                                        maxlength='@Model.getLimit[AbstractGroup]("name")'>
-                            </td>
-                            <td>
-                                <button class="btn btn-primary btn-xs" data-bind="click: $root.addGroup">
-                                    <span class="glyphicon glyphicon-plus icon-no-gap"> Create</span>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <button type="submit" class="btn btn-success"
-                        data-bind="click: $root.saveConference, text: $root.saveButtonText,
-                                        css { disabled: $root.saveButtonDisabled }">Save</button>
+        <div class="row">
+          <label for="published" class="col-sm-2 col-form-label">Published</label>
+          <div class="form-check col-sm-10 align-self-center">
+            <input type="checkbox" class="form-check-input" id="published" name="published" data-bind="checked: isPublished, valueUpdate: 'afterkeydown', click: $root.changeHandler">
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="active" class="col-sm-2 col-form-label">Active</label>
+          <div class="form-check col-sm-10">
+            <input type="checkbox" class="form-check-input" id="active" name="active" data-bind="checked: isActive, valueUpdate: 'afterkeydown', click: $root.changeHandler">
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="name" class="col-sm-2 col-form-label">Name</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="name" placeholder="Name" data-bind="value: name, valueUpdate: 'afterkeydown'" maxlength='@Model.getLimit[Conference]("name")'>
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="short" class="col-sm-2 col-form-label">Short</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="short" placeholder="Short name" data-bind="value: short, valueUpdate: 'afterkeydown'" maxlength='Model.getLimit[Conference]("short")'>
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="group" class="col-sm-2 col-form-label">Group</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="group" placeholder="The conference group" data-bind="value: group, valueUpdate: 'afterkeydown'" maxlength='@Model.getLimit[Conference]("group")'>
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="cite" class="col-sm-2 col-form-label">Cite</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="cite" placeholder="Cite text" data-bind="value: cite, valueUpdate: 'afterkeydown'" maxlength='@Model.getLimit[Conference]("cite")'>
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="start" class="col-sm-2 col-form-label">Start</label>
+          <div class="col-sm-10">
+            <input type="datetime" class="form-control" id="start" placeholder="Start date" data-bind="datetimepicker: start">
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="end" class="col-sm-2 col-form-label">End</label>
+          <div class="col-sm-10">
+            <input type="datetime" class="form-control" id="end" placeholder="End date" data-bind="datetimepicker: end">
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="deadline" class="col-sm-2 col-form-label">Deadline</label>
+          <div class="col-sm-10">
+            <input type="datetime" class="form-control" id="deadline" placeholder="Abstract submission deadline" data-bind="datetimepicker: deadline">
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="logo-file" class="col-sm-2 col-form-label">Logo File</label>
+          <div class="col-sm-10">
+            <div data-bind="ifnot: $root.logo()">
+              <div>Images of format "jpg", "gif", "png" are supported; the size limit is 5MB.</div>
+              <input type="file" name="logo-file" id="logo-file" data-bind="event: { change: $root.getNewBanner }, enable: $root.isConferenceSaved" maxlength="250" class="form-control">
+              <div data-bind="ifnot: $root.isConferenceSaved">
+                Note: The image will be uploaded when the conference is saved.
+              </div>
             </div>
+
+            <div data-bind="if: $root.logo()">
+              <button type="button" name="remove-logo" class="btn btn-default btn-sm pull-right" data-bind="click: $root.removeBanner">
+                Remove
+              </button>
+              <div class="banner-box">
+                <img class="conference-logo img-responsive img-rounded" src="" data-bind="attr: {src: $root.logo().URL}">
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Geo information management -->
-        <div data-bind="if: $root.isConferenceSaved" role="tabpanel" class="tab-pane" id="geo">
-            <table>
-                <tbody>
-                    <tr>
-                        <td class="col-xs-12">
-                            <textarea id="geoContent" class="form-control" rows="12"
-                                placeholder="Conference geo information. Requires well-formed JSON."
-                                data-bind="value: geoContent, valueUpdate: 'afterkeydown'"
-                                maxlength='@Model.getLimit[Conference]("geo")'></textarea>
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-success"
-                                data-bind="click: $root.uploadGeo">Upload</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div >
-
-        <!-- Schedule information management -->
-        <div data-bind="if: $root.isConferenceSaved" role="tabpanel" class="tab-pane" id="schedule">
-            <table>
-                <tbody>
-                    <tr>
-                        <td class="col-xs-12">
-                            <textarea id="scheduleContent" class="form-control" rows="12"
-                            placeholder="Conference schedule information. Requires well-formed JSON."
-                            data-bind="value: scheduleContent, valueUpdate: 'afterkeydown'"
-                            maxlength='@Model.getLimit[Conference]("schedule")'></textarea>
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-success"
-                            data-bind="click: $root.uploadSchedule">Upload</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="row">
+          <label for="logo" class="col-sm-2 col-form-label">Logo Link</label>
+          <div class="col-sm-10">
+            <input type="url" class="form-control" id="logo" placeholder="Banner Logo url" data-bind="value: $root.logoURL, valueUpdate: 'afterkeydown',
+                                event: {'keydown': $root.changeHandler}" maxlength='@Model.getLimit[ConfText]("text")'>
+            <div>
+              Note: If a logo image is uploaded, the logo link will not be used.
+            </div>
+          </div>
         </div>
 
-        <!-- Conference info management -->
-        <div data-bind="if: $root.isConferenceSaved" role="tabpanel" class="tab-pane" id="info">
-            <table>
-                <tbody>
-                    <tr>
-                        <td class="col-xs-12">
-                            <textarea id="infoContent" class="form-control" rows="12"
-                            placeholder="Conference info data. Use markdown."
-                            data-bind="value: infoContent, valueUpdate: 'afterkeydown'"
-                            maxlength='@Model.getLimit[Conference]("info")'></textarea>
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-success"
-                            data-bind="click: $root.uploadInfo">Upload</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="row">
+          <label for="thumbnail-file" class="col-sm-2 col-form-label">Thumbnail File</label>
+          <div class="col-sm-10">
+            <div data-bind="ifnot: $root.thumbnail()">
+              <div>Images of format "jpg", "gif", "png" are supported; the size limit is 5MB.</div>
+              <input type="file" name="thumbnail-file" id="thumbnail-file" data-bind="event: { change: $root.getNewBanner }, enable: $root.isConferenceSaved" maxlength="250" class="form-control">
+              <div data-bind="ifnot: $root.isConferenceSaved">
+                Note: The image will be uploaded when the conference is saved.
+              </div>
+            </div>
+
+            <div data-bind="if: $root.thumbnail()">
+              <button type="button" name="remove-thumbnail" class="btn btn-default btn-sm pull-right" data-bind="click: $root.removeBanner">
+                Remove
+              </button>
+              <div class="banner-box">
+                <img class="conference-logo img-responsive img-rounded" src="" data-bind="attr: {src: $root.thumbnail().URL}">
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- owner management with owned component -->
-        <div data-bind="if: $root.isConferenceSaved" role="tabpanel" class="tab-pane" id="owner">
-            @components.owned()
+        <div class="row">
+          <label for="thumbnail" class="col-sm-2 col-form-label">Thumbnail Link</label>
+          <div class="col-sm-10">
+            <input type="url" class="form-control" id="thumbnail" placeholder="Thumbnail image url" data-bind="value: $root.thumbnailURL, valueUpdate: 'afterkeydown',
+                                event: {'keydown': $root.changeHandler}" maxlength='@Model.getLimit[ConfText]("text")'>
+            <div>
+              Note: If a thumbnail image is uploaded, the thumbnail link will not be used.
+            </div>
+          </div>
         </div>
 
-      </div> <!-- tab content -->
+        <div class="row">
+          <label for="iosapp" class="col-sm-2 col-form-label">iOS App</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="iosapp" placeholder="iOS App id" data-bind="value: iOSApp, valueUpdate: 'afterkeydown'" maxlength='@Model.getLimit[Conference]("iOSApp")'>
+          </div>
+        </div>
 
-    </div> <!-- KO !flickerbox -->
+        <div class="row">
+          <label for="link" class="col-sm-2 col-form-label">Link</label>
+          <div class="col-sm-10">
+            <input type="url" class="form-control" id="link" placeholder="Link to the conference homepage" data-bind="value: link, valueUpdate: 'afterkeydown'" maxlength='@Model.getLimit[Conference]("link")'>
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="desc" class="col-sm-2 col-form-label">Description</label>
+          <div class="col-sm-10">
+            <textarea class="form-control" id="desc" rows="4" placeholder='Conference description (max. @Model.getLimit[ConfText]("text") characters). Use Markdown.' data-bind="value: $root.description, valueUpdate: 'afterkeydown',
+                                event: {'keydown': $root.changeHandler}" maxlength='@Model.getLimit[ConfText]("text")'></textarea>
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="notice" class="col-sm-2 col-form-label">Notice</label>
+          <div class="col-sm-10">
+            <textarea class="form-control" id="notice" rows="4" placeholder='Conference notice (max. @Model.getLimit[ConfText]("text") characters). Use Markdown.' data-bind="value: $root.notice, valueUpdate: 'afterkeydown',
+                                event: {'keydown': $root.changeHandler}" maxlength='@Model.getLimit[ConfText]("text")'></textarea>
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="presentation" class="col-sm-2 col-form-label">Presentation Preferences</label>
+          <div class="col-sm-10 form-check align-self-center">
+            <input type="checkbox" class="form-check-input" id="presentation" name="presentation" data-bind="checked: hasPresentationPrefs, valueUpdate: 'afterkeydown', click: $root.changeHandler">
+          </div>
+        </div>
+
+        <div class="row">
+          <label class="col-sm-2 col-form-label">Topics</label>
+          <div class="col-sm-10">
+            <ul class="list-inline" data-bind="sortable: topics">
+              <li><span class="badge bg-secondary" data-bind="text: $data"></span>
+                <a class="btn-remove-topic" data-bind="click: $root.removeTopic">
+                  <i class="fa-solid fa-trash"></i>
+                </a>
+              </li>
+            </ul>
+            <div class="row">
+              <div class="col-sm-6 align-self-center">
+                <input class="form-control" type="text" placeholder="topic" id="addTopic" maxlength='@Model.getLimit[Topic]("topic")' />
+              </div>
+              <div class="col-sm-6 align-self-center">
+                <a id="btn-add-topic" class="btn btn-primary btn-sm" data-bind="click: $root.addTopic">
+                  <i class="fa-solid fa-plus"></i> Add Topic</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="mAbsLen" class="col-sm-3 col-form-label">Max. Abs. Len. (&lt;@Model.getLimit[Abstract]("text"))</label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control" id="mAbsLen" placeholder="Maximum Abstract Length (chars)" data-bind="value:mAbsLeng, valueUpdate:'afterkeydown', event: { keypress: $root.ensureNumerical }" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-10 offset-sm-2 alert alert-danger fade show" data-bind="visible: $root.checkmAbsLeng()">
+            Changing to shorter abstract length causes cut-offs for already created abstracts exceeding this new length!
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="mFigs" class="col-sm-3 col-form-label">Max. Figs.</label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control" id="mFigs" placeholder="Maximum Number Of Figures" data-bind="value: mFigs, valueUpdate: 'afterkeydown', event: { keypress: $root.ensureNumerical }" />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="text-center">
+            <button type="submit" class="btn btn-success" data-bind="click: $root.saveConference, text: $root.saveButtonText, disable: $root.saveButtonDisabled">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- groups management -->
+    <div data-bind="if: $root.isConferenceSaved" role="tabpanel" class="tab-pane" id="groups">
+      <div data-bind="with: conference">
+        <table class="table .table-condensed">
+          <thead>
+            <tr>
+              <th class="col-xs-1">Prefix</th>
+              <th class="col-xs-4">Short</th>
+              <th class="col-xs-6">Long</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- ko foreach: groups -->
+            <tr>
+              <td>
+                <input class="form-control" data-bind="value: prefix, valueUpdate: 'afterkeydown'" type="text" maxlength='@Model.getLimit[AbstractGroup]("prefix")'>
+              </td>
+              <td>
+                <input class="form-control" data-bind="value: short, valueUpdate: 'afterkeydown'" type="text" maxlength='@Model.getLimit[AbstractGroup]("short")'>
+              </td>
+              <td>
+                <input class="form-control" data-bind="value: name, valueUpdate: 'afterkeydown'" type="text" maxlength='@Model.getLimit[AbstractGroup]("name")'>
+              </td>
+              <td>
+                <button class="btn btn-danger btn-xs" data-bind="click: $root.removeGroup">
+                  <i class="fa-solid fa-trash"></i> Remove
+                </button>
+              </td>
+            </tr>
+            <!-- /ko -->
+            <tr id="newGroup">
+              <td>
+                <input id="ngPrefix" class="form-control" type="text" maxlength='@Model.getLimit[AbstractGroup]("prefix")'>
+              </td>
+              <td>
+                <input id="ngShort" class="form-control" type="text" maxlength='@Model.getLimit[AbstractGroup]("short")'>
+              </td>
+              <td>
+                <input id="ngName" class="form-control" type="text" maxlength='@Model.getLimit[AbstractGroup]("name")'>
+              </td>
+              <td>
+                <button class="btn btn-primary btn-xs" data-bind="click: $root.addGroup">
+                  <i class="fa-solid fa-plus"></i> Create
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="submit" class="btn btn-success" data-bind="click: $root.saveConference, text: $root.saveButtonText, disable: $root.saveButtonDisabled">Save</button>
+      </div>
+    </div>
+
+    <!-- Geo information management -->
+    <div data-bind="if: $root.isConferenceSaved" role="tabpanel" class="tab-pane" id="geo">
+      <div class="row">
+        <div class="col-sm-12">
+          <textarea id="geoContent" class="form-control" rows="12" placeholder="Conference geo information in GeoJSON format.  &#13;'name', 'description' and 'floorplans' can be included in the `properties`." data-bind="value: geoContent, valueUpdate: 'afterkeydown'" maxlength='@Model.getLimit[Conference]("geo")'></textarea>
+        </div>
+        <div class="col-sm-2">
+          <button type="submit" class="btn btn-success my-3" data-bind="click: $root.uploadGeo">Upload</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedule information management -->
+    <div data-bind="if: $root.isConferenceSaved" role="tabpanel" class="tab-pane" id="schedule">
+      <div class="row">
+        <div class="col-sm-12">
+          <textarea id="scheduleContent" class="form-control" rows="12" placeholder="Conference schedule information. Requires well-formed JSON." data-bind="value: scheduleContent, valueUpdate: 'afterkeydown'" maxlength='@Model.getLimit[Conference]("schedule")'></textarea>
+        </div>
+        <div class="col-sm-2">
+          <button type="submit" class="btn btn-success my-3" data-bind="click: $root.uploadSchedule">Upload</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conference info management -->
+    <div data-bind="if: $root.isConferenceSaved" role="tabpanel" class="tab-pane" id="info">
+      <div class="row">
+        <div class="col-sm-12">
+          <textarea id="infoContent" class="form-control" rows="12" placeholder="Conference info data. Use markdown." data-bind="value: infoContent, valueUpdate: 'afterkeydown'" maxlength='@Model.getLimit[Conference]("info")'></textarea>
+        </div>
+        <div class="col-sm-2">
+          <button type="submit" class="btn btn-success my-3" data-bind="click: $root.uploadInfo">Upload</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- owner management with owned component -->
+    <div data-bind="if: $root.isConferenceSaved" role="tabpanel" class="tab-pane" id="owner">
+      @components.owned()
+    </div>
+
+  </div> <!-- tab content -->
+
+</div>
+
 }
-

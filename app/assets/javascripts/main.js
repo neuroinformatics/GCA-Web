@@ -2,28 +2,32 @@
  * Require JS main configuration
  */
 (function (requirejs) {
-    "use strict";
+  'use strict';
 
-    requirejs.config({
-        shim: {
-            "ko.sortable": ["knockout", "jquery.ui.sortable"]
-        },
-        paths: {
-            requirejs: ["../lib/requirejs/require"],
-            jquery: ["../lib/jquery/jquery"],
-            "jquery-ui": ["../lib/jquery-ui/jquery-ui.min"],
-            "jquery.ui.sortable": ["../lib/jquery-ui/jquery-ui"],
-            knockout: ["//cdnjs.cloudflare.com/ajax/libs/knockout/3.0.0/knockout-debug"],
-            "ko.sortable": ["knockout-sortable.min"],
-            bootstrap: ["../lib/bootstrap/js/bootstrap"],
-            sammy: ["../lib/sammy/sammy"],
-            moment: ["../lib/momentjs/moment"],
-            jsroutes: ["/jsroutes"],
-            datetimepicker: ["//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min"],
-            dhtmlxscheduler: ["../lib/scheduler/dhtmlxscheduler"],
-            offline: ["../lib/offline"]
-        }
-    });
+  requirejs.config({
+    map: {
+      'ko.sortable': {
+        'jquery-ui/ui/widgets/sortable': 'jquery-ui',
+        'jquery-ui/ui/widgets/draggable': 'jquery-ui',
+        'jquery-ui/ui/widgets/droppable': 'jquery-ui',
+      },
+    },
+    paths: {
+      requirejs: ['../lib/requirejs/require.min'],
+      jquery: ['../lib/jquery/jquery.min'],
+      'jquery-ui': ['../lib/jquery-ui/jquery-ui.min'],
+      knockout: ['../lib/knockout/knockout'],
+      'ko.sortable': ['../lib/knockout-sortable/build/knockout-sortable.min'],
+      datetimepicker: ['../lib/datetimepicker/build/jquery.datetimepicker.full.min'],
+      'jquery-mousewheel': ['../lib/jquery-mousewheel/jquery.mousewheel'],
+      sammy: ['../lib/sammy/sammy.min'],
+      dayjs: ['../lib/dayjs/dayjs.min'],
+      'dayjs.calendar': ['../lib/dayjs/plugin/calendar'],
+      leaflet: ['../lib/leaflet/dist/leaflet'],
+      dhtmlxscheduler: ['../lib/dhtmlx-scheduler/codebase/dhtmlxscheduler'],
+      offline: ['../lib/offline'],
+    },
+  });
 
-    return requirejs;
+  return requirejs;
 })(requirejs);

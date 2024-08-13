@@ -1,6 +1,8 @@
 logs
 project/project
 project/target
+project/.bloop
+project/metals.sbt
 target
 tmp
 .history
@@ -13,7 +15,10 @@ dist
 /.project
 /RUNNING_PID
 /.settings
+/.bloop
+/.metals
 *.db
+app-*
 banner
 figures
 figures_mobile

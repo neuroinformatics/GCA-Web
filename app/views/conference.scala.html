@@ -2,103 +2,101 @@
 
 @template(account, Option(conference), "conference") {
 
-    <div class="hidden-data">
-        <div id="conference-uuid">@conference.uuid</div>
-    </div>
+<div class="hidden-data">
+  <div id="conference-uuid">@conference.uuid</div>
+</div>
 
-    <div class="hidden-data">
-        <div id="account-uuid">@if(account.isDefined) {
-            @account.get.uuid
-        }
-        </div>
-    </div>
-
-    <script data-main='@routes.Assets.at("javascripts/conference-list.js")'
-    src='@routes.Assets.at("javascripts/require.js")'></script>
-
-    <!-- The conference info page -->
-    <div class="jumbotron">
-        <div class="page-header">
-            <h1>@conference.name</h1>
-        </div>
-        @if(conference.link != null){
-            @if(conference.getConfText("logo") != null && conference.getConfText("logo") != "") {
-                <div data-bind="ifnot: $root.logos()[0]">
-                    <a href="@conference.link">
-                        <img class="conference-logo img-responsive img-rounded"
-                        src='@conference.getConfText("logo")' alt="To Conference">
-                    </a>
-                </div>
-            }
-            <div data-bind="if: $root.logos()[0]">
-                <a href="@conference.link">
-                    <img class="conference-logo img-responsive img-rounded" src=""
-                    data-bind="attr: {src: $root.logos()[0].URL}">
-                </a>
-            </div>
-        }
-        @if(conference.getConfTextAsHTML("description").length() > 0) {
-            <div class="jumbo-small">
-                @Html(conference.getConfTextAsHTML("description"))
-            </div>
-        }
-        <p>@conference.formatDuration</p>
-        <!-- user/conference options depending on the conference state -->
-        @if(conference.isOpen) {
-            <ul class="list-inline">
-            <li>
-               <p>Submission is <span class="text-success"><b>open</b></span>!</p>
-            </li>
-            </ul>
-
-            @if(account.isDefined) {
-                <div class="jumbo-small">
-                    In order to submit an abstract please press the appropriate button below.
-                </div>
-                <div class="form-group">
-                    <a href="@routes.Application.submission(conference.uuid)" class="btn btn-success">Submit new Abstract</a>
-                    or manage
-                    <a href="@routes.Application.abstractsPrivate()" class="btn btn-primary">Your Abstracts</a>
-                </div>
-            } else {
-                <div class="jumbo-small">
-                    In order to submit an abstract, please login or register.<br>
-                    Accounts registered for another conference at this site are also valid.
-                </div>
-                <div class="form-group">
-                    <a href="@routes.Accounts.logIn()" class="btn btn-primary">Login</a>
-                    <a href="@routes.Accounts.signUp()" class="btn btn-primary">Register</a>
-                </div>
-            }
-        } else {
-            @if(conference.isPublished) {
-                <a href="@routes.Application.abstractsPublic(conference.short)" class="btn btn-primary">Abstracts</a>
-            } else {
-                <p>Submission is <span class="text-danger"><b>closed</b></span>.<br>
-                    Please check the <a href="@conference.link">conference homepage</a> for details.
-                </p>
-            }
-        }
-        <!-- Conference owner section to manage owners -->
-        @if(account.isDefined && (conference.isOwner(account.get) || account.get.isAdmin)) {
-            <hr>
-            <h3>Administration</h3>
-            <div class="form-group">
-                <a href="@routes.Application.adminConference(conference.uuid)" class="btn btn-danger">Conference Settings</a>
-                <a href="@routes.Application.adminAbstracts(conference.uuid)" class="btn btn-danger">Abstracts</a>
-            </div>
-        }
-    </div>
-
-    <!-- The conference info panel -->
-    @if(conference.getInfoAsHTML().length() > 0) {
-        <div class="jumbotron">
-            <div class="page-header">
-                <h1>General Information</h1>
-            </div>
-            <div class="jumbo-small">
-                @Html(conference.getInfoAsHTML())
-            </div>
-        </div>
+<div class="hidden-data">
+  <div id="account-uuid">@if(account.isDefined) {
+    @account.get.uuid
     }
+  </div>
+</div>
+
+<script data-main='@routes.Assets.at("javascripts/conference-list.js")' src='@routes.Assets.at("lib/requirejs/require.min.js")'></script>
+
+<!-- The conference info page -->
+<div class="jumbotron">
+  <div class="page-header">
+    <h1>@conference.name</h1>
+  </div>
+  @if(conference.link != null){
+  @if(conference.getConfText("logo") != null && conference.getConfText("logo") != "") {
+  <div data-bind="ifnot: $root.logos()[0]">
+    <a href="@conference.link">
+      <img class="conference-logo img-responsive img-rounded" src='@conference.getConfText("logo")' alt="To Conference">
+    </a>
+  </div>
+  }
+  <div data-bind="if: $root.logos()[0]">
+    <a href="@conference.link">
+      <img class="conference-logo img-responsive img-rounded" src="" data-bind="attr: {src: $root.logos()[0].URL}">
+    </a>
+  </div>
+  }
+  @if(conference.getConfTextAsHTML("description").length() > 0) {
+  <div class="jumbo-small">
+    @Html(conference.getConfTextAsHTML("description"))
+  </div>
+  }
+  <p>@conference.formatDuration</p>
+  <!-- user/conference options depending on the conference state -->
+  @if(conference.isOpen) {
+  <ul class="list-inline">
+    <li>
+      <p>Submission is <span class="text-success"><b>open</b></span>!</p>
+    </li>
+  </ul>
+
+  @if(account.isDefined) {
+  <div class="jumbo-small">
+    In order to submit an abstract please press the appropriate button below.
+  </div>
+  <div class="form-group">
+    <a href="@routes.Application.submission(conference.uuid)" class="btn btn-success">Submit new Abstract</a>
+    or manage
+    <a href="@routes.Application.abstractsPrivate()" class="btn btn-primary">Your Abstracts</a>
+  </div>
+  } else {
+  <div class="jumbo-small">
+    In order to submit an abstract, please login or register.<br />
+    Accounts registered for another conference at this site are also valid.
+  </div>
+  <div class="form-group">
+    <a href="@routes.Accounts.logIn()" class="btn btn-primary">Login</a>
+    <a href="@routes.Accounts.signUp()" class="btn btn-primary">Register</a>
+  </div>
+  }
+  } else {
+  @if(conference.isPublished) {
+  <a href="@routes.Application.abstractsPublic(conference.short)" class="btn btn-primary">Abstracts</a>
+  } else {
+  <p>Submission is <span class="text-danger"><b>closed</b></span>.<br />
+    Please check the <a href="@conference.link">conference homepage</a> for details.
+  </p>
+  }
+  }
+  <!-- Conference owner section to manage owners -->
+  @if(account.isDefined && (conference.isOwner(account.get) || account.get.isAdmin)) {
+  <hr>
+  <h3>Administration</h3>
+  <div class="form-group">
+    <a href="@routes.Application.adminConference(conference.uuid)" class="btn btn-danger">Conference Settings</a>
+    <a href="@routes.Application.adminAbstracts(conference.uuid)" class="btn btn-danger">Abstracts</a>
+  </div>
+  }
+</div>
+
+<!-- The conference info panel -->
+@if(conference.getInfoAsHTML().length() > 0) {
+<div class="jumbotron">
+  <div class="page-header">
+    <h1>General Information</h1>
+  </div>
+  <div class="jumbo-small">
+    @Html(conference.getInfoAsHTML())
+  </div>
+</div>
+}
+
 }

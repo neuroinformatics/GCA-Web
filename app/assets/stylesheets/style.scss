@@ -1,0 +1,778 @@
+@import "_bootstrap_custom";
+
+// mixins
+@mixin custom-gap($p, $m) {
+  padding: $p;
+  margin: $m;
+}
+
+@mixin no-gap {
+  @include custom-gap(0, 0);
+}
+
+@mixin small-gap {
+  @include custom-gap(.2rem, .2rem);
+}
+
+@mixin std-gap {
+  @include custom-gap(.5rem, .5rem);
+}
+
+@mixin enum-with-comma($selector: '') {
+  ul#{$selector} {
+    @include no-gap;
+    list-style: none;
+    display: inline-block;
+
+    li {
+      display: inline-block;
+
+      &:not(:last-child):after {
+        content: ", ";
+      }
+    }
+  }
+}
+
+// styles
+html {
+  font-size: 14px;
+}
+
+body {
+  min-height: 100%;
+  margin: 0 auto;
+  padding-top: 20px;
+  padding-bottom: 20px;
+
+  >.container {
+    max-width: 960px;
+  }
+}
+
+legend {
+  border: 0;
+  border-bottom: 1px solid $color-light-gray-dark;
+}
+
+a {
+  text-decoration: none;
+
+  &.btn:hover {
+    text-decoration: none !important;
+  }
+}
+
+.jumbotron {
+  padding: 10px;
+  margin: 15px 0;
+  background-color: $color-light-gray;
+
+  .page-header {
+    h1 {
+      font-size: 29px;
+    }
+  }
+
+  p {
+    font-size: 18px;
+
+    &.paragraph-small {
+      font-size: 14px;
+    }
+  }
+}
+
+.hidden-data {
+  display: none;
+}
+
+i.fa-solid,
+i.fa-regular {
+  margin: 0 0.3rem;
+}
+
+span.btn:hover {
+  cursor: auto;
+}
+
+.drag-handle-icon {
+  color: var(--bs-secondary);
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.header {
+  border-radius: 4px;
+  border: 1px solid $brand-primary-border;
+
+  .container-fluid {
+    padding: 0;
+    align-items: stretch;
+
+    .navbar-brand {
+      padding: 15px 10px;
+    }
+
+    .navbar-toggler {
+      margin: 10px 15px 10px 0;
+    }
+
+    .navbar-collapse {
+      align-items: stretch;
+
+      @media (max-width: 768px) {
+        border-top: 1px solid $brand-primary-border;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        padding: .3rem 0;
+      }
+
+      .navbar-nav {
+        .nav-item {
+          &.active {
+            background-color: $brand-primary-active;
+
+            &:hover {
+              background-color: $brand-primary-active-hover;
+            }
+          }
+
+          &:hover {
+            background-color: $brand-primary-hover;
+          }
+
+          .nav-link {
+            padding: 10px 15px;
+            line-height: 2rem;
+          }
+        }
+      }
+    }
+  }
+
+  @media (min-width: 768px) {
+    &.navbar-expand-md {
+      flex-wrap: wrap;
+    }
+  }
+}
+
+.main-content {
+  padding: 15px 0;
+
+  @media (min-width: 768px) {
+    padding: 15px 30px;
+  }
+
+  a {
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  table.table-condensed {
+    font-size: .9rem;
+  }
+
+  .page-header {
+    padding-bottom: 9px;
+    margin: 40px 0 20px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .conference-logo {
+    max-height: 128px;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .jumbo-small {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+
+  .separator {
+    border-color: var(--bs-secondary);
+  }
+
+  .tab-content {
+    margin: 1rem 0;
+  }
+
+  #floorplans {
+    .floorplan {
+      margin: 1rem 0;
+      border: 1px solid #cccccc;
+    }
+  }
+
+  .myabstracts,
+  .myfavourites {
+    .conference {
+      margin: .75rem 0;
+
+      .card-header {
+        a {
+          color: var(--bs-link-color);
+
+          &:hover {
+            color: var(--bs-link-hover-color);
+          }
+
+          font-size: 1.2rem;
+        }
+      }
+
+      .list-group-item {
+        &.abstract {
+          &:hover {
+            background-color: $brand-primary-hover;
+
+            a {
+              color: $color-light-gray;
+            }
+          }
+
+          a {
+            text-decoration: none;
+            color: var(--bs-body-color);
+          }
+
+          .badge {
+            margin: .3rem;
+            float: right;
+          }
+        }
+      }
+    }
+  }
+
+  .admin-conference {
+    .admin-form {
+      .row {
+        &:not(:last-child) {
+          border-bottom: 1px solid #eeeeee;
+        }
+
+        padding: .5rem 0;
+
+        .col-form-label {
+          font-weight: bold;
+        }
+
+        .form-check {
+          text-align: center;
+
+          .form-check-input {
+            width: 2rem;
+            height: 2rem;
+            float: none;
+          }
+        }
+
+        .form-control {
+          margin: .3rem 0;
+        }
+      }
+    }
+  }
+
+  .submission-header {
+    margin: .5rem;
+    padding: .5rem;
+
+    h3 {
+      small {
+        font-size: 65%;
+        color: var(--bs-secondary);
+      }
+    }
+  }
+}
+
+.footer {
+  color: $color-dark-gray;
+  border-radius: 4px;
+  background-color: $color-light-gray;
+  padding: 25px 15px;
+
+  p,
+  ul {
+    margin: 0;
+  }
+
+  a {
+    color: $color-dark-gray;
+
+    &:hover,
+    &:focus {
+      color: var(--bs-body-color);
+      text-decoration: underline;
+    }
+  }
+}
+
+// .conference-thumbnail {
+//   max-height: 64px;
+// }
+
+
+#abstract-list {
+  margin: 1rem 0;
+
+  .list-group-item {
+    &:hover {
+      cursor: pointer;
+      background-color: $color-bccn-3 !important;
+      color: White;
+    }
+
+    .abstract {
+      padding: 0 .5rem;
+
+      .sortId {
+        float: right;
+        margin: .5rem 0 .5rem 1rem;
+      }
+
+      h4 {
+        @include no-gap;
+        margin-bottom: .25rem;
+        font-size: 1.2rem;
+      }
+
+      @include enum-with-comma('.authors');
+    }
+  }
+}
+
+#abstract {
+  h4 {
+    font-size: 1.3rem;
+  }
+
+  .pagination {
+    justify-content: space-between;
+
+    .page-link {
+      border-radius: 0;
+
+      .favour,
+      .disfavour {
+        margin-left: .5rem;
+        padding: 0 .5rem;
+        border: 1px solid var(--bs-border-color);
+        border-radius: 4px;
+
+        &:hover {
+          text-decoration: none;
+        }
+      }
+
+      .favour {
+        color: #434a54 !important;
+        background-color: white !important;
+      }
+
+      .disfavour {
+        color: #b8860b;
+        background-color: #fffa78;
+      }
+    }
+  }
+
+  .title,
+  .authors,
+  .affiliations,
+  .doi,
+  .figures,
+  .abstract-text,
+  .acknowledgements,
+  .references,
+  .foot-info,
+  .topic,
+  .poster-or-talk {
+    padding: 0;
+    margin: 1.2rem 0 1rem;
+  }
+
+  .authors {
+    @include enum-with-comma;
+    font-size: 1.3rem;
+  }
+
+  .affiliations {
+    padding-left: 1.5rem;
+    font-size: .75rem;
+    color: var(--bs-secondary);
+
+    ol {
+      @include no-gap;
+      padding-left: 1.8rem;
+      vertical-align: super;
+
+      span {
+        font-size: .92rem;
+        font-style: italic;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  .abstract-text {
+    padding: 0 .5rem;
+    font-family: $font-family-serif;
+    text-align: justify;
+    font-size: 1.2rem;
+    min-height: 10rem;
+  }
+
+  .foot-info {
+    ul {
+      list-style-type: none;
+      padding: 0;
+
+      li {
+        margin: .5rem 0 .3rem;
+
+        .value {
+          color: var(--bs-secondary);
+        }
+      }
+    }
+  }
+
+  .editor-box {
+    min-height: 3.2rem;
+    padding: .5rem;
+    border-radius: 5px;
+    border: 1px solid var(--bs-body-bg);
+
+    >.btn-group {
+      visibility: hidden;
+    }
+
+    &:hover {
+      border: 1px solid var(--bs-border-color);
+
+      >.btn-group {
+        visibility: visible;
+      }
+    }
+
+    .title {
+      h2:empty::after {
+        color: var(--bs-secondary);
+        content: "1. Enter your abstract title here";
+      }
+    }
+
+    .authors {
+      ul:empty::after {
+        list-style: none;
+        color: var(--bs-secondary);
+        content: "2. Add all abstract authors";
+      }
+    }
+
+    .affiliations {
+      ol:empty::after {
+        font-size: small;
+        list-style: none;
+        color: var(--bs-secondary);
+        content: "3. Add affiliations and assign authors";
+      }
+    }
+
+    #affiliations-editor {
+      tbody .affiliation-form td {
+        border-top: 1px solid var(--bs-border-color);
+      }
+    }
+
+    .abstract-text:empty::after {
+      color: var(--bs-secondary);
+      content: "4. Enter abstract text";
+    }
+
+    .acknowledgements {
+      >p:empty::after {
+        color: var(--bs-secondary);
+        content: "5. Enter acknowledgements text";
+      }
+    }
+
+    .references {
+      >ol:empty::after {
+        list-style: none;
+        color: var(--bs-secondary);
+        margin-left: -1rem;
+        content: "6. Add referenced sources";
+      }
+    }
+
+    .figure {
+      >div:empty:after {
+        color: var(--bs-secondary);
+        padding-left: 1rem;
+        display: inline-block;
+        content: "7. You have the option to include one image with your abstract. This image should be in one of the formats GIF, JPG, or PNG and should be at least 700 pixels wide and no larger than 5MB.";
+
+      }
+    }
+  }
+}
+
+// tooltip
+.gn-tooltip {
+  color: black;
+
+  .gn-tooltip-text {
+    visibility: hidden;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    padding: 5px;
+    border-radius: 5px;
+    position: fixed;
+    z-index: 1;
+    margin-top: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  &:hover .gn-tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+// callout
+.callout {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border-left: .3rem solid #eee;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 0;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+  code,
+  .highlight {
+    background-color: #fff;
+    white-space: pre-wrap;
+  }
+}
+
+.callout-success {
+  @extend .callout;
+  background-color: var(--bs-success-bg-subtle);
+  border-color: var(--bs-success-border-subtle);
+}
+
+.callout-info {
+  @extend .callout;
+  background-color: var(--bs-info-bg-subtle);
+  border-color: var(--bs-info-border-subtle);
+}
+
+.callout-warning {
+  @extend .callout;
+  background-color: var(--bs-warning-bg-subtle);
+  border-color: var(--bs-warning-border-subtle);
+}
+
+.callout-danger {
+  @extend .callout;
+  background-color: var(--bs-danger-bg-subtle);
+  border-color: var(--bs-danger-border-subtle);
+}
+
+// conference scheduler
+:root {
+  --dhx-scheduler-xy-scale_height: 0 !important;
+  --dhx-scheduler-xy-scroll_width: 0 !important;
+  --dhx-scheduler-event-color: var(--bs-body-color) !important;
+  --dhx-scheduler-event-background: var(--bs-body-bg) !important;
+}
+
+$conference-schedule-event-badge-color: blue;
+$conference-schedule-track-badge-color: green;
+$conference-schedule-session-badge-color: red;
+
+%conference-schedule-badge {
+  padding: .4rem .7rem;
+  font-size: .9rem;
+  font-weight: 400;
+  border-radius: 3px;
+  line-height: 1.5;
+
+  &.badge-event {
+    background-color: $conference-schedule-event-badge-color;
+  }
+
+  &.badge-track {
+    background-color: $conference-schedule-track-badge-color;
+  }
+
+  &.badge-session {
+    background-color: $conference-schedule-session-badge-color;
+  }
+}
+
+#conference_scheduler {
+  .conference-scheduler-navbar {
+    width: 100%;
+  }
+
+  .dhx_cal_navline {
+    height: 60px;
+  }
+
+  .dhx_cal_header {
+    display: none;
+  }
+
+  .dhx_cal_data {
+    .dhx_cal_event {
+      padding: 0;
+
+      .conference-scheduler-event {
+        height: 100%;
+        padding: .3rem .5rem;
+        border: 1px solid var(--bs-border-color);
+        border-radius: 4px;
+        overflow: hidden;
+
+        &.event-st {
+          border: 2px solid $conference-schedule-session-badge-color;
+        }
+
+        &.event-te {
+          border: 2px solid $conference-schedule-track-badge-color;
+        }
+
+        .conference-scheduler-header {
+          padding: .5rem 0;
+          border-bottom: 1px solid var(--bs-border-color);
+
+          .badge {
+            @extend %conference-schedule-badge;
+            vertical-align: middle;
+          }
+
+          h4 {
+            font-size: 1.29rem;
+            margin: .5rem;
+            display: inline-block;
+            vertical-align: middle;
+          }
+
+          .time {
+            font-size: 1.1rem;
+            display: block;
+            text-align: right;
+          }
+        }
+
+        .conference-scheduler-body {
+          padding: .5rem 0;
+
+          .conference-scheduler-modification {
+            text-align: right;
+
+            i.fa-solid {
+              padding: .3rem;
+              margin: 0 .1rem;
+
+              &:hover {
+                cursor: pointer;
+                background-color: var(--bs-border-color);
+              }
+
+            }
+          }
+
+          .conference-scheduler-timeline {
+            .d-flex {
+              &:not(:last-child) {
+                border-bottom: 1px solid var(--bs-border-color);
+              }
+
+              &:hover {
+                cursor: pointer;
+                background-color: var(--bs-border-color);
+              }
+
+              >div {
+                font-size: .9rem;
+                padding: .5rem;
+
+                &:last-child {
+                  text-align: right;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+#conference-scheduler-info {
+  .modal-header {
+    .badge {
+      @extend %conference-schedule-badge;
+      margin-left: auto;
+    }
+  }
+
+  .modal-body {
+    >p {
+      margin: 0 0 .5rem;
+    }
+
+    .abstract {
+      border: 1px solid #cecece;
+      border-radius: 6px;
+
+      .abstract-header {
+        padding: .5rem;
+        border-bottom: 1px solid #cecece;
+
+        &:hover {
+          background-color: var(--bs-secondary-bg);
+        }
+
+        a {
+          font-weight: bold;
+          color: var(--bs-body-color);
+
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+
+      .abstract-body {
+        padding: .5rem;
+        height: 15rem;
+        overflow: auto;
+      }
+    }
+  }
+}

@@ -2,21 +2,21 @@
 
 @template(account, None, "About") {
 
-    <!-- The contact info -->
-    <div class="page-header">
-        <h1>About</h1>
+<!-- The contact info -->
+<div class="page-header">
+  <h1>About</h1>
+</div>
+<div>
+  <div class="row">
+    <div class="col-md-8">
+      <p>This Abstract System is hosted by the
+        <a href="https://www.neuroinf.jp">INCF Japan Node(J-Node)</a>.
+      </p>
     </div>
-    <div>
-        <div class="row">
-            <div class="col-sm-7">
-                <p>This Abstract System is hosted by the
-                    <a href="https://www.neuroinf.jp">INCF Japan Node(J-Node)</a>.
-                </p>
-            </div>
-            <div class="col-sm-4">
-                <img class="img-responsive" src="@routes.Assets.at("images/jnode_logo.png")">
-            </div>
-        </div>
+    <div class="col-md-4">
+      <img class="img-responsive" src='@routes.Assets.at("images/jnode_logo.png")'>
+    </div>
+  </div>
+</div>
 
-    </div>
 }

@@ -2,30 +2,26 @@
 
 @template(account, Some(conference), "Abstract") {
 
-    <div class="hidden-data">
-        <div id="conference-uuid">@conference.uuid</div>
-        <div id="abstract-uuid">@abstr.uuid</div>
-        <div id="is-admin">@account.exists(account => account.isAdmin || abstr.conference.isOwner(account))</div>
-        <div id="is-owner">@account.exists(account => abstr.isOwner(account) )</div>
-    </div>
+<div class="hidden-data">
+  <div id="conference-uuid">@conference.uuid</div>
+  <div id="abstract-uuid">@abstr.uuid</div>
+  <div id="is-admin">@account.exists(account => account.isAdmin || abstr.conference.isOwner(account))</div>
+  <div id="is-owner">@account.exists(account => abstr.isOwner(account) )</div>
+</div>
 
-    <script data-main="@routes.Assets.at("javascripts/abstract-viewer.js")"
-                  src="@routes.Assets.at("javascripts/require.js")"></script>
+<script data-main='@routes.Assets.at("javascripts/abstract-viewer.js")' src='@routes.Assets.at("lib/requirejs/require.min.js")'></script>
 
-    @components.messsagebox()
+@components.messsagebox()
 
-    <!-- Knockout non-flicker  -->
-    <div style="display: none" data-bind="visible: true">
+<div style="display: none" data-bind="visible: true">
 
-    @components.singleabstract("selectedAbstract", Some("conference")){ <!-- header --> }{ <!-- footer --> }
+  @components.singleabstract("selectedAbstract", Some("conference")){ <!-- header --> }{ <!-- footer --> }
 
-    @components.statelog("stateLog") {
-        <hr>
-        <p class="lead">State Log</p>
-    }
+  @components.statelog("stateLog") {
+  <hr>
+  <p class="lead">State Log</p>
+  }
 
-    </div> <!-- KO !flickerbox -->
+</div>
 
 }
-
-

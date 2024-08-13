@@ -2,35 +2,33 @@
 
 @template(Some(account), None, "Accounts") {
 
-    <script data-main="@routes.Assets.at("javascripts/admin-accounts.js")"
-                  src="@routes.Assets.at("javascripts/require.js")"></script>
+<script data-main='@routes.Assets.at("javascripts/admin-accounts.js")' src='@routes.Assets.at("lib/requirejs/require.min.js")'></script>
 
 
-    @components.messsagebox()
+@components.messsagebox()
 
-    <!-- Knockout non-flicker  -->
-    <div style="display: none" data-bind="visible: true">
-        <h5>Number of total accounts: <span data-bind="text: noAccounts"></span></h5>
-        <!-- The account table -->
-        <table class="table .table-condensed">
-            <thead>
-                <tr>
-                    <th>Email</th>
-                    <th>Name</th>
-                    <th>Registration</th>
-                    <th>uuid</th>
-                </tr>
-            </thead>
-            <tbody data-bind="foreach: accounts">
-                <tr>
-                    <td><span data-bind="text: mail"></span></td>
-                    <td><span data-bind="text: fullName"></span></td>
-                    <td><span data-bind="text: formatCtime()"></span></td>
-                    <td><span data-bind="text: uuid"></span></td>
-                </tr>
-            </tbody>
-        </table>
+<div style="display: none" data-bind="visible: true">
+  <h5>Number of total accounts: <span data-bind="text: noAccounts"></span></h5>
+  <!-- The account table -->
+  <table class="table .table-condensed">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Registration</th>
+        <th>uuid</th>
+      </tr>
+    </thead>
+    <tbody data-bind="foreach: accounts">
+      <tr>
+        <td><span data-bind="text: mail"></span></td>
+        <td><span data-bind="text: fullName"></span></td>
+        <td><span data-bind="text: formatCtime()"></span></td>
+        <td><span data-bind="text: uuid"></span></td>
+      </tr>
+    </tbody>
+  </table>
 
-    </div> <!-- KO !flickerbox -->
+</div>
 
 }

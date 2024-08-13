@@ -2,53 +2,51 @@
 
 @template(Some(account), None, "My Abstracts") {
 
-    <div class="hidden-data">
-        <div id="conference-uuid">@account.uuid</div>
+<div class="hidden-data">
+  <div id="account-uuid">@account.uuid</div>
+</div>
+
+<script data-main='@routes.Assets.at("javascripts/userdash.js")' src='@routes.Assets.at("lib/requirejs/require.min.js")'></script>
+
+<!-- ko if: isLoading -->
+<div class="alert alert-info fade show" role="alert">
+  <h4>Loading data</h4>
+  <p>Please wait...</p>
+</div>
+<!-- /ko -->
+
+<div class="myabstracts" style="display: none" data-bind="visible: true">
+
+  <div data-bind="visible: error">
+    <!-- ko with: error -->
+    <div class="alert alert-warning alert-dismissible show" data-bind="css: level" role="alert">
+      <strong data-bind="html: message"></strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+    <!-- /ko -->
+  </div>
 
-    <script data-main='@routes.Assets.at("javascripts/userdash.js")'
-                  src='@routes.Assets.at("javascripts/require.js")'></script>
-
-    <!-- Loading box -->
-    <div data-bind="if: isLoading">
-        <div class="alert alert-info fade in out">
-            <h4>Loading data</h4>
-            <p>Please wait...</p>
-        </div>
+  <div class="conferences" data-bind="foreach: conferences">
+    <div class="card conference">
+      <div class="card-header">
+        <a data-bind="attr: { href: localConferenceLink() }, text: name"></a>
+      </div>
+      <ul class="list-group list-group-flush">
+        <!-- ko if: cite -->
+        <li class="list-group-item">
+          <span data-bind="text: cite"></span>
+        </li>
+        <!-- /ko -->
+        <!-- ko foreach: abstracts -->
+        <li class="list-group-item abstract">
+          <a data-bind="attr: { href: viewEditCtx().link }">
+            <span data-bind="text: title"> </span>
+            <span class="badge bg-secondary" data-bind="text: state"></span>
+          </a>
+        </li>
+        <!-- /ko -->
+      </ul>
     </div>
-
-    <!-- Knockout !flickerbox  -->
-    <div style="display: none" data-bind="visible: true">
-
-        <!-- Error message box -->
-        <div data-bind="visible: error">
-            <!-- ko with: error -->
-            <div class="alert alert-warning fade in alert-dismissable" data-bind="css: level">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <strong data-bind="html: message"></strong>
-            </div>
-            <!-- /ko -->
-        </div>
-
-        <div data-bind="foreach: conferences">
-            <div class="panel panel-default">
-                <div class="panel-heading" >
-                    <a data-bind="attr: { href: localConferenceLink() }">
-                        <h4 class="panel-title" data-bind="text: name"></h4>
-                    </a>
-                </div>
-                <div class="panel-body">
-                    <span data-bind="text: cite"></span>
-                </div>
-                <ul id="abstract-list" class="list-group" data-bind="foreach: abstracts">
-                    <a data-bind="attr: { href: viewEditCtx().link }">
-                        <li id="abstract-list-item" class="list-group-item abstract">
-                            <span data-bind="text: title"> </span>
-                            <span class="badge" data-bind="text: state"></span>
-                        </li>
-                    </a>
-                </ul>
-            </div>
-        </div>
-    </div>
+  </div>
+</div>
 }

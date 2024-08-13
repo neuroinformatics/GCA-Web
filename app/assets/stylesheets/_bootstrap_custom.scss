@@ -1,0 +1,210 @@
+@import "../lib/bootstrap/css/bootstrap.min.css";
+
+@function to-rgb($value) {
+  @return red($value), green($value), blue($value);
+}
+
+// custom variables
+$font-family-sans-serif: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-family-serif: "EB Garamond", Georgia, "Times New Roman", Times, serif;
+$font-family-monospace: Menlo, Monaco, Consolas, "Courier New", monospace;
+
+$color-bccn-1: #0c429b;
+$color-bccn-2: #2455a5;
+$color-bccn-3: #557bb9;
+$color-bccn-4: #6d8ec3;
+$color-bccn-5: #b6c7e1;
+
+$color-light-gray: #f5f7fa;
+$color-light-gray-dark: #d3dce9;
+$color-dark-gray: #646464;
+$color-dark-gray-dark: #282828;
+
+$body-color: $color-dark-gray-dark;
+$body-bg: #ffffff;
+
+$brand-primary: $color-bccn-3;
+$brand-primary-active: darken($brand-primary, 10%);
+$brand-primary-hover: darken($brand-primary, 10%);
+$brand-primary-border: darken($brand-primary, 12%);
+$brand-primary-active-hover: darken($brand-primary, 17%);
+$brand-primary-active-border: darken($brand-primary, 25%);
+
+$brand-secondary: $color-dark-gray;
+
+$navbar-color: $color-light-gray;
+$navbar-hover-color: $color-light-gray-dark;
+$navbar-disabled-color: darken($color-light-gray-dark, 6.5%);
+$navbar-link-color: $navbar-color;
+$navbar-link-hover-color: $navbar-hover-color;
+
+$bs3-success-text: #3c763d;
+$bs3-success-bg: #dff0d8;
+$bs3-success-border: darken(adjust-hue($bs3-success-bg, -10deg), 5%);
+$bs3-info-text: #31708f;
+$bs3-info-bg: #d9edf7;
+$bs3-info-border: darken(adjust-hue($bs3-info-bg, -10deg), 7%);
+$bs3-warning-text: #8a6d3b;
+$bs3-warning-bg: #fcf8e3;
+$bs3-warning-border: darken(adjust-hue($bs3-warning-bg, -10deg), 5%);
+$bs3-danger-text: #a94442;
+$bs3-danger-bg: #f2dede;
+$bs3-danger-border: darken(adjust-hue($bs3-danger-bg, -10deg), 5%);
+
+// overrides
+:root {
+  --bs-primary: #{$brand-primary};
+  --bs-secondary: #{$brand-secondary};
+  --bs-success: #{$bs3-success-text};
+  --bs-info: #{$bs3-info-text};
+  --bs-warning: #{$bs3-warning-text};
+  --bs-danger: #{$bs3-danger-text};
+  --bs-primary-rgb: #{to-rgb($brand-primary)};
+  --bs-secondary-rgb: #{to-rgb($brand-secondary)};
+  --bs-success-rgb: #{to-rgb($bs3-success-text)};
+  --bs-info-rgb: #{to-rgb($bs3-info-text)};
+  --bs-warning-rgb: #{to-rgb($bs3-warning-text)};
+  --bs-danger-rgb: #{to-rgb($bs3-danger-text)};
+  --bs-success-text-emphasis: #{$bs3-success-text};
+  --bs-info-text-emphasis: #{$bs3-info-text};
+  --bs-warning-text-emphasis: #{$bs3-warning-text};
+  --bs-danger-text-emphasis: #{$bs3-danger-text};
+  --bs-success-bg-subtle: #{$bs3-success-bg};
+  --bs-info-bg-subtle: #{$bs3-info-bg};
+  --bs-warning-bg-subtle: #{$bs3-warning-bg};
+  --bs-danger-bg-subtle: #{$bs3-danger-bg};
+  --bs-success-border-subtle: #{$bs3-success-border};
+  --bs-info-border-subtle: #{$bs3-info-border};
+  --bs-warning-border-subtle: #{$bs3-warning-border};
+  --bs-danger-border-subtle: #{$bs3-danger-border};
+  --bs-font-sans-serif: #{$font-family-sans-serif};
+  --bs-font-monospace: #{$font-family-monospace};
+  --bs-body-color: #{$body-color};
+  --bs-body-color-rgb: #{to-rgb($body-color)};
+  --bs-body-bg: #{$body-bg};
+  --bs-body-bg-rgb: #{to-rgb($body-bg)};
+  --bs-link-color: #{$brand-primary};
+  --bs-link-color-rgb: #{to-rgb($brand-primary)};
+  --bs-link-hover-color: #{$brand-primary-hover};
+  --bs-link-hover-color-rgb: #{to-rgb($brand-primary-hover)};
+}
+
+.navbar {
+  --bs-navbar-padding-x: 0;
+  --bs-navbar-padding-y: 0;
+  --bs-navbar-color: #{$navbar-color};
+  --bs-navbar-hover-color: #{$navbar-hover-color};
+  --bs-navbar-disabled-color: #{$navbar-disabled-color};
+  --bs-navbar-active-color: #{$navbar-color};
+  --bs-navbar-brand-font-size: 1.35rem;
+  --bs-navbar-brand-color: #{$navbar-color};
+  --bs-navbar-brand-hover-color: #{$navbar-hover-color};
+  --bs-navbar-toggler-font-size: 1rem;
+  --bs-navbar-toggler-border-color: #{$color-light-gray-dark};
+  --bs-navbar-toggler-focus-width: .1rem;
+}
+
+.btn {
+  --bs-btn-disabled-border-color: #cccccc;
+}
+
+.btn-primary {
+  --bs-btn-bg: #{$brand-primary};
+  --bs-btn-border-color: #{$brand-primary-border};
+  --bs-btn-hover-bg: #{$brand-primary-hover};
+  --bs-btn-hover-border-color: #{$brand-primary-border};
+  --bs-btn-active-bg: #{$brand-primary-active};
+  --bs-btn-active-border-color: #{$brand-primary-active-border};
+  --bs-btn-disabled-bg: #{$brand-primary};
+  --bs-btn-disabled-border-color: #{$brand-primary};
+}
+
+.pagination {
+  --bs-pagination-active-color: var(--bs-body-color);
+  --bs-pagination-active-bg: var(--bs-body-bg);
+  --bs-pagination-active-border-color: var(--bs-border-color);
+}
+
+// compatibility with bootstrap 3
+// - button-groups
+.btn-xs {
+  padding: 1px 5px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+}
+
+// - buttons
+.btn-default {
+  color: #333333;
+  background-color: #ffffff;
+  border-color: #cccccc;
+
+  &:hover {
+    background-color: #e6e6e6;
+    border-color: #adadad;
+  }
+}
+
+// - carouse
+.img-responsive {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+// - jumbotron
+.jumbotron {
+  padding-top: 30px;
+  padding-bottom: 30px;
+  margin-bottom: 30px;
+  color: inherit;
+  background-color: #eeeeee;
+
+  .container &,
+  .container-fluid & {
+    padding-right: 15px;
+    padding-left: 15px;
+    border-radius: 6px;
+  }
+
+  @media screen and (min-width: 768px) {
+    padding-top: 48px;
+    padding-bottom: 48px;
+
+    .container &,
+    .container-fluid & {
+      padding-right: 60px;
+      padding-left: 60px;
+    }
+  }
+}
+
+// - scaffolding
+hr {
+  margin: 20px 0;
+  border: 0;
+  border-top: 1px solid #eeeeee;
+  opacity: 1;
+}
+
+.img-rounded {
+  border-radius: 6px;
+}
+
+// - type
+h1 small {
+  font-size: 65%;
+  font-weight: 400;
+  line-height: 1;
+  color: #777777;
+}
+
+// - utilities
+.pull-right {
+  float: right !important;
+}
+
+.pull-left {
+  float: left !important;
+}

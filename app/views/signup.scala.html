@@ -6,22 +6,23 @@
 
   @flash(request)
 
-  <fieldset class="col-md-6 col-md-offset-3">
-    <legend>Register an account</legend>
+<div class="row justify-content-center">
+  <fieldset class="col-md-7">
+    <legend class="mb-3">Register an account</legend>
 
-    @helper.form(action = routes.Accounts.create()) {
+  @helper.form(action = routes.Accounts.create()) {
 
-      @text(form("firstName"), "First name", icon = "person")
-      @text(form("lastName"), "Last name", icon = "person")
-      @text(form("email"), "Email", icon = "at")
-      @password(form("password"), "Password", icon = "key")
+    @text(form("firstName"), "First name", icon = "person")
+    @text(form("lastName"), "Last name", icon = "person")
+    @text(form("email"), "Email", icon = "at")
+    @password(form("password"), "Password", icon = "key")
 
-      <div class="form-group">
-
-        <div>
-          <button id="submit" type="submit" value="submit" class="btn btn-lg btn-primary btn-block">Submit</button>
-        </div>
+    <div class="mb-3">
+      <div class="d-grid">
+        <button id="submit" type="submit" value="submit" class="btn btn-lg btn-primary">Submit</button>
       </div>
-    }
+    </div>
+  }
   </fieldset>
+</div>
 }

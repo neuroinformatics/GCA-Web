@@ -1,0 +1,35 @@
+// Do not display specific elements in the print view
+.navbar,
+.pagination,
+.footer,
+.hidden-data,
+.nav,
+.jumbo-small,
+.callout,
+.pager,
+.alert {
+  display: none;
+}
+
+body {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+a {
+  color: var(--bs-body-color);
+}
+
+#abstract {
+  .affiliations {
+    color: var(--bs-body-color);
+
+    ol span {
+      font-style: normal;
+    }
+  }
+
+  .foot-info ul li .value {
+    color: var(--bs-body-color);
+  }
+}

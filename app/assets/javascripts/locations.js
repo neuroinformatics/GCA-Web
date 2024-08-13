@@ -1,125 +1,144 @@
-require(["main"], function () {
-require(["lib/models", "lib/tools", "lib/leaflet/leaflet", "lib/msg", "lib/astate", "knockout", "lib/offline"], function(models, tools, msg, leaflet, astate, ko, offline) {
-    "use strict";
+require(['main'], function () {
+  require(['lib/models', 'lib/tools', 'leaflet', 'lib/msg', 'lib/astate', 'knockout', 'lib/offline'], function (
+    models,
+    tools,
+    msg,
+    leaflet,
+    astate,
+    ko,
+    offline,
+  ) {
+    'use strict';
 
     function LocationsViewModel(confId, mapType) {
-        if (!(this instanceof LocationsViewModel)) {
-            return new LocationsViewModel(confId, mapType);
-        }
+      if (!(this instanceof LocationsViewModel)) {
+        return new LocationsViewModel(confId, mapType);
+      }
 
-        var self = tools.inherit(this, msg.MessageBox);
+      var self = tools.inherit(this, msg.MessageBox);
 
-        self.mapType = mapType;
+      self.mapType = mapType;
 
-        self.conference = ko.observable(null);
-        self.geoContent = ko.observable(null);
-        self.stateLog = ko.observable(null);
+      self.conference = ko.observable(null);
+      self.geoContent = ko.observable(null);
+      self.stateLog = ko.observable(null);
 
-        // Observables as iterative list
-        self.init = function() {
-            self.loadConference(confId);
-            ko.applyBindings(window.viewer);
-            // start MathJax
-            MathJax.Hub.Configured();
-        };
+      // Observables as iterative list
+      self.init = function () {
+        self.loadConference(confId);
+        ko.applyBindings(window.viewer);
+        // start MathJax
+        MathJax.typeset();
+      };
 
-        self.ioFailHandler = function(jqxhr, textStatus, error) {
-            self.setError("Error", "Unable to load the conference with uuid = " + confId);
-        };
+      self.ioFailHandler = function (jqxhr, textStatus, error) {
+        self.setError('Error', 'Unable to load the conference with uuid = ' + confId);
+      };
 
-        self.loadConference = function(confId) {
-            // we should be reading this from the conference
-            var confUrl = "/api/conferences/" + confId;
+      self.loadConference = function (confId) {
+        // we should be reading this from the conference
+        var confUrl = '/api/conferences/' + confId;
 
-            offline.requestJSON(confId, confUrl, onConferenceData, self.ioFailHandler);
+        offline.requestJSON(confId, confUrl, onConferenceData, self.ioFailHandler);
 
-            function onConferenceData(confObj) {
-                var conf = models.Conference.fromObject(confObj);
-                self.conference(conf);
-                offline.requestJSON(conf.uuid + "geo", self.conference().geo, onGeoData, self.ioFailHandler);
+        function onConferenceData(confObj) {
+          var conf = models.Conference.fromObject(confObj);
+          self.conference(conf);
+          offline.requestJSON(conf.uuid + 'geo', self.conference().geo, onGeoData, self.ioFailHandler);
 
-                function onGeoData(geojson) {
-                    // depending on whether locations or floor plan page
-                    if (self.mapType === "locations") {
-                        $("#map-div").height(0.75 * $("#map-div").width());
-                        var confmap = L.map("map-div");
-
-                        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-                            attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>',
-                            tileSize: 512,
-                            maxZoom: 20,
-                            zoomOffset: -1,
-                            id: 'mapbox/streets-v11',
-                            accessToken: "pk.eyJ1IjoiZ25vZGUiLCJhIjoiY2prOGFnbzY2MWlmNzN3bzRhY205N2oxZCJ9.-j7b1aziK9nUNjgHQh0ojw"
-                        }).addTo(confmap);
-
-                        var texts = "";
-
-                        for (var i = 0; i < geojson.length; i++) {
-                            // get map coordinates
-                            var coords = [geojson[i].point.lat, geojson[i].point.long];
-                            texts += geojson[i].name + "\n";
-                            // set view only once
-                            if (i === 0) {
-                                confmap.setView(coords, 13);
-                            }
-                            // add markers and descriptions
-                            var marker = L.marker(coords).addTo(confmap);
-                            marker.bindPopup("<b>" + geojson[i].name + "</b><br>" + geojson[i].description).openPopup();
-                        }
-                    } else if (self.mapType === "floorplans") {
-                        // load all floorplans on one page
-                        for (var i = 0; i < geojson.length; i++) {
-                            // load floorplans, if they're included
-                            if (geojson[i].floorplans) {
-                                $("#floorplans-wrap").append("<h2>" + geojson[i].name + "</h2><p>" + geojson[i].description + "</p>");
-
-                                for (var j = 0; j < geojson[i].floorplans.length; j++) {
-                                    // create image in order to get actual image dimensions cross browser
-                                    var img = new Image();
-                                    img.src = geojson[i].floorplans[j];
-                                    img.onload = handleLoad;
-
-                                    // possible to incorporate rooms with coordinates just as above,
-                                    // just be sure to use right coordinate system (cf. leaflet page)
-                                    // and mapping probably needed for room number vs. location
-                                }
-                            }
-                        }
-                    }
-
-                    function handleLoad(response) {
-                        $("#floorplans-wrap").append('<div id="floorplan-div-' + i + j + '" class="floorplan-divs" style="margin-bottom: 1em;"></div>');
-
-                        // Get accurate measurements from that.
-                        var nw = img.width;
-                        var nh = img.height;
-
-                        var floor = L.map("floorplan-div-" + i + j, {
-                            crs: L.CRS.Simple,
-                            minZoom: 0
-                        });
-
-                        if (nh > nw) {
-                            $("#floorplan-div-" + i + j).height($("#floorplan-div-" + i + j).width());
-                            $("#floorplan-div-" + i + j).width(nw / nh * $("#floorplan-div-" + i + j).height());
-                        } else {
-                            $("#floorplan-div-" + i + j).height(nh / nw * $("#floorplan-div-" + i + j).width());
-                        }
-
-                        var bounds  = [[0, 0], [$("#floorplan-div-" + i + j).height(), $("#floorplan-div-" + i + j).width()]];
-                        var image = L.imageOverlay(img.src, bounds).addTo(floor);
-                        floor.fitBounds(bounds);
-                    }
+          function onGeoData(geojson) {
+            // depending on whether locations or floor plan page
+            if (self.mapType === 'locations') {
+              $('#map-div').height(0.75 * $('#map-div').width());
+              var map = L.map('map-div');
+              L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+              }).addTo(map);
+              let isFirst = true;
+              function onEachFeature(feature, layer) {
+                if (feature.properties != null) {
+                  const { name, description } = feature.properties;
+                  if (name != null) {
+                    const text = `<b>${name}</b>${description != null ? `<br />${description}` : ''}`;
+                    layer.bindPopup(text);
+                  }
                 }
+                if (feature.geometry != null) {
+                  const { type, coordinates } = feature.geometry;
+                  if (isFirst && type != null && type === 'Point') {
+                    map.setView([coordinates[1], coordinates[0]], 13);
+                    isFirst = false;
+                  }
+                }
+              }
+              L.geoJSON(geojson, {
+                onEachFeature: onEachFeature,
+              }).addTo(map);
+            } else if (self.mapType === 'floorplans') {
+              const features = geojson.type === 'FeatureCollection' ? geojson.features : [geojson];
+              // load all floorplans on one page
+              for (let i = 0; i < features.length; i++) {
+                // load floorplans, if they're included
+                if (features[i].properties && features[i].properties.floorplans) {
+                  const { name, description } = features[i].properties;
+                  const floorplans = Array.isArray(features[i].properties.floorplans)
+                    ? features[i].properties.floorplans
+                    : [features[i].properties.floorplans];
+                  $('#floorplans').append(`<h2>${name}</h2>${description != null ? `<p>${description}</p>` : ''}`);
+                  for (let j = 0; j < floorplans.length; j++) {
+                    // create image in order to get actual image dimensions cross browser
+                    const img = new Image();
+                    img.src = floorplans[j];
+                    img.onload = function () {
+                      handleLoad(img, i, j);
+                    };
+                    // possible to incorporate rooms with coordinates just as above,
+                    // just be sure to use right coordinate system (cf. leaflet page)
+                    // and mapping probably needed for room number vs. location
+                  }
+                }
+              }
             }
-        };
+
+            function handleLoad(img, i, j) {
+              const key = `floorplan-${i}-${j}`;
+              const id = `#${key}`;
+              $('#floorplans').append(`<div id="${key}" class="floorplan" style="margin-bottom: 1em;"></div>`);
+
+              // Get accurate measurements from that.
+              const nw = img.width;
+              const nh = img.height;
+
+              const floor = L.map(key, {
+                crs: L.CRS.Simple,
+                minZoom: 0,
+              });
+
+              if (nh > nw) {
+                $(id).height($(id).width());
+                $(id).width((nw / nh) * $(id).height());
+              } else {
+                $(id).height((nh / nw) * $(id).width());
+              }
+
+              const bounds = [
+                [0, 0],
+                [$(id).height(), $(id).width()],
+              ];
+              console.log(bounds);
+              L.imageOverlay(img.src, bounds).addTo(floor);
+              floor.fitBounds(bounds);
+            }
+          }
+        }
+      };
     }
 
-    $(document).ready(function() {
-        var data = tools.hiddenData();
-        window.viewer = LocationsViewModel(data["conferenceUuid"], data["mapType"]);
-        window.viewer.init();
+    $(document).ready(function () {
+      var data = tools.hiddenData();
+      window.viewer = LocationsViewModel(data['conferenceUuid'], data['mapType']);
+      window.viewer.init();
     });
-});
+  });
 });

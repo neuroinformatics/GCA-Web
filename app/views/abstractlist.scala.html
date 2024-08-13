@@ -2,117 +2,116 @@
 
 @template(account, Option(conference), "abstracts") {
 
-    <div class="hidden-data">
-        <div id="conference-uuid">@conference.uuid</div>
-        <div id="logged-in">@if(account.isDefined) {"true"} else {"false"}</div>
+<div class="hidden-data">
+  <div id="conference-uuid">@conference.uuid</div>
+  <div id="logged-in">@if(account.isDefined) {"true"} else {"false"}</div>
+</div>
+
+<script data-main='@routes.Assets.at("javascripts/abstract-list.js")'
+  src='@routes.Assets.at("lib/requirejs/require.min.js")'></script>
+
+<!-- ko if: isLoading -->
+<div class="alert alert-info fade show" role="alert">
+  <h4>Loading data</h4>
+  <p>Please wait...</p>
+</div>
+<!-- /ko -->
+
+<div style="display: none" data-bind="visible: true">
+
+  <!-- Error message box -->
+  <div data-bind="visible: error">
+    <!-- ko with: error -->
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      <strong data-bind="html: message"></strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+    <!-- /ko -->
+  </div>
 
-    <script data-main='@routes.Assets.at("javascripts/abstract-list.js")'
-            src='@routes.Assets.at("javascripts/require.js")'></script>
+  <!-- Success message box; for unknown reason the css level is not properly updated; keep until resolved -->
+  <div data-bind="visible: messageSuccess">
+    <!-- ko with: messageSuccess -->
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+      <strong data-bind="html: message"></strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <!-- /ko -->
+  </div>
 
-    <!-- Loading box -->
-    <div data-bind="if: isLoading">
-        <div class="alert alert-info fade in out">
-            <h4>Loading data</h4>
-            <p>Please wait...</p>
+  <div class="page-header">
+    <h1><a data-bind="attr: {href: $root.localConferenceLink}">@conference.name</a></h1>
+  </div>
+
+  <div>
+    <ul class="nav nav-tabs" data-bind="foreach: groups">
+      <!-- ko if: name -->
+      <li class="nav-item"><a class="nav-link" data-bind="attr: { href: link }, text: name, css: state"></a></li>
+      <!-- /ko -->
+    </ul>
+  </div>
+
+  <div class="jumbo-small" data-bind="visible: !$root.selectedAbstract()">
+    <input id="search" type="text" placeholder="Search abstracts..." data-bind="value:filter, valueUpdate: 'keyup'">
+  </div>
+
+  <!-- The abstract list -->
+  <div id="abstract-list" class="list-group" data-bind="foreach: abstracts">
+    <div class="list-group-item" data-bind="click: $root.selectAbstract, visible: $parent.isInFiltered($data)">
+      <div class="abstract">
+        <div class="sortId" data-bind="html: $parent.makeAbstractID($data)"></div>
+        <div class="box">
+          @if(account.isDefined) {
+          <div class="pull-right" data-bind="visible: $parent.isFavourite($data)">&#9733</div>
+          }
+          <h4 class="list-group-item-heading" data-bind="text: title"></h4>
+          <div class="list-group-item-text">
+            <ul class="authors" data-bind="foreach: authors">
+              <li data-bind="text: $data.formatCitation()"></li>
+            </ul>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Knockout non-flicker  -->
-    <div style="display: none" data-bind="visible: true">
+  <!-- The abstract viewer -->
+  @components.singleabstract("selectedAbstract", Some("conference")) {
+  <!-- the header of the singleabstract viewer -->
+  <nav aria-label="Page navigation">
+    <ul class="pagination">
+      <li class="page-item" data-bind="css: { disabled: $parent.prevAbstract($data) == null }">
+        <a class="page-link" aria-label="Previous" data-bind="attr: {href : $parent.prevAbstract($data)}"><span
+            aria-hidden="true">&larr; </span>Previous</a>
+      </li>
+      <li class="page-item">
+        <span class="page-link active">
+          <!-- ko with: $root.conference -->
+          <span data-bind="html: formatSortId($parent.sortId)"></span>
+          <!-- /ko -->
+          @if(account.isDefined) {
+          <a class="favour gn-tooltip" data-bind="click: $root.favourAbstract, visible: !$root.isFavourite($data)"
+            href="#">
+            &#9733
+            <span class="gn-tooltip-text">Add abstract to favourites</span>
+          </a>
+          <a class="disfavour gn-tooltip" data-bind="click: $root.disfavourAbstract, visible: $root.isFavourite($data)"
+            href="#">
+            &#9733
+            <span class="gn-tooltip-text">Remove abstract from favourites</span>
+          </a>
+          }
+        </span>
+      </li>
+      <li class="page-item" data-bind="css: { disabled: $parent.nextAbstract($data) == null }">
+        <a class="page-link" aria-label="Next" data-bind="attr: {href : $parent.nextAbstract($data)}">Next<span
+            aria-hidden="true"> &rarr;</span></a>
+      </li>
+    </ul>
+  </nav>
+  } {
+  <!-- footer -->
+  }
+</div>
 
-    <!-- Error message box -->
-    <div data-bind="visible: error">
-        <!-- ko with: error -->
-        <div class="alert alert-warning fade in alert-dismissable" data-bind="css: level">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            <strong data-bind="html: message"></strong>
-        </div>
-        <!-- /ko -->
-    </div>
-
-    <!-- Success message box; for unknown reason the css level is not properly updated; keep until resolved -->
-    <div data-bind="visible: messageSuccess">
-        <!-- ko with: messageSuccess -->
-        <div class="alert alert-info fade in alert-dismissable">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            <strong data-bind="html: message"></strong>
-        </div>
-        <!-- /ko -->
-    </div>
-
-    <div class="page-header">
-        <h1><a data-bind="attr: {href: $root.localConferenceLink}">@conference.name</a></h1>
-    </div>
-
-    <div>
-        <ul class="nav nav-tabs" data-bind="foreach: groups">
-            <!-- ko if: name -->
-                <li data-bind="attr: {class: state}"><a data-bind="attr: { href: link }, text: name"></a></li>
-            <!-- /ko -->
-        </ul>
-    </div>
-
-    <div class="jumbo-small" data-bind="visible: !$root.selectedAbstract()">
-        <input id="search" type="text" placeholder="Search abstracts..." data-bind="value:filter, valueUpdate: 'keyup'" >
-    </div>
-
-    <!-- The abstract list -->
-    <div id="abstract-list" class="list-group" data-bind="foreach: abstracts">
-        <div class="list-group-item" id="abstract-list-item"
-        data-bind="click: $root.selectAbstract, visible: $parent.isInFiltered($data)">
-            <div class="abstract">
-                <div class="sortId" data-bind="html: $parent.makeAbstractID($data)"></div>
-                <div class="box">
-                    @if(account.isDefined) {
-                        <div class="pull-right" data-bind="visible: $parent.isFavourite($data)">&#9733</div>
-                    }
-                    <h4 class="list-group-item-heading" data-bind="text: title"></h4>
-                    <div class="list-group-item-text">
-                        <ul class="authors" data-bind="foreach: authors">
-                            <li data-bind="text: $data.formatCitation()"></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- The abstract viewer -->
-
-    @components.singleabstract("selectedAbstract", Some("conference")) {
-        <!-- the header of the singleabstract viewer -->
-        <ul class="pager">
-            <li class="previous" data-bind="css: { disabled: $parent.prevAbstract($data) == null }">
-                <a data-bind="attr: {href : $parent.prevAbstract($data)}">&larr; Previous</a>
-            </li>
-            <li>
-               <!-- ko with: $root.conference -->
-               <span data-bind="html: formatSortId($parent.sortId)"></span>
-               <!-- /ko -->
-            </li>
-
-            @if(account.isDefined) {
-                <li data-bind="visible: !$root.isFavourite($data)">
-                    <a class="favour gn-tooltip" data-bind="click: $root.favourAbstract" href="">
-                        &#9733
-                        <span class="gn-tooltiptext">Add abstract to favourites</span>
-                    </a>
-                </li>
-                <li data-bind="visible: $root.isFavourite($data)">
-                    <a class="disfavour gn-tooltip" data-bind="click: $root.disfavourAbstract" href="">
-                        &#9733
-                        <span class="gn-tooltiptext">Remove abstract from favourites</span>
-                    </a>
-                </li>
-            }
-
-            <li class="next" data-bind="css: { disabled: $parent.nextAbstract($data) == null }">
-                <a data-bind="attr: {href : $parent.nextAbstract($data)}">Next &rarr;</a>
-            </li>
-        </ul>
-    } {
-        <!-- footer -->
-    }
-    </div> <!-- KO !flickerbox -->
 }

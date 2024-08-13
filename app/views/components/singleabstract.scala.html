@@ -3,87 +3,85 @@
 <!-- The abstract viewer -->
 <div id="abstract" data-bind="with: @koAbstractName">
 
-    @header
+  @header
 
-    <div class="title">
-        <h2 data-bind="text: title"></h2>
-    </div>
+  <div class="title">
+    <h2 data-bind="text: title"></h2>
+  </div>
 
-    <div class="authors">
-        <ul data-bind="foreach: authors">
-            <li><span data-bind="text: formatName()"></span><sup data-bind="text: formatAffiliations()"></sup></li>
-        </ul>
-    </div>
+  <div class="authors">
+    <ul data-bind="foreach: authors">
+      <li><span data-bind="text: formatName()"></span><sup data-bind="text: formatAffiliations()"></sup></li>
+    </ul>
+  </div>
 
-    <div class="affiliations">
-        <ol data-bind="foreach: affiliations">
-            <li><span data-bind="text: format()"></span></li>
-        </ol>
-    </div>
+  <div class="affiliations">
+    <ol data-bind="foreach: affiliations">
+      <li><span data-bind="text: format()"></span></li>
+    </ol>
+  </div>
 
-    <div class="doi" data-bind="if: $data.doi">
-        <h4>doi: <a data-bind="text: $data.doi, attr: {href: $data.doiLink()}"></a></h4>
-    </div>
+  <div class="doi" data-bind="if: $data.doi">
+    <h4>doi: <a data-bind="text: $data.doi, attr: {href: $data.doiLink()}"></a></h4>
+  </div>
 
-    <div class="abstract-text" data-bind="foreach: paragraphs()">
-        <p data-bind="text: $data"></p>
-    </div>
+  <div class="abstract-text" data-bind="foreach: paragraphs()">
+    <p data-bind="text: $data"></p>
+  </div>
 
-    <div>
-        <div data-bind="foreach: figures">
-            <div class="row">
-                <img class="col-xs-offset-2 col-xs-6 img-responsive"
-                      data-bind="attr: {src: URL}, click: function(data, event) { $(('#figure' + ($index() + 1))).modal(); }">
-                <div class="col-xs-offset-2 col-xs-6">
-                    <span>Figure <span data-bind="text: $index() + 1"></span>:</span>
-                    <span data-bind="text: caption"></span>
-                </div>
-            </div>
-
-            <div class="modal fade" data-bind="attr: {id: 'figure' + ($index() + 1) }">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title">Figure <span data-bind="text: $index() + 1"></span></h4>
-                        </div>
-                        <div class="modal-body">
-                            <img class="img-responsive" data-bind="attr: {src: URL}">
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div class="figures">
+    <div data-bind="foreach: figures">
+      <div class="row justify-content-center">
+        <img class="col-sm-7 img-responsive" data-bs-toggle="modal" data-bind="attr: {src: URL, 'data-bs-target': '#figure' + ($index() + 1) }">
+        <div class="col-sm-7">
+          <span>Figure <span data-bind="text: $index() + 1"></span>:</span>
+          <span data-bind="text: caption"></span>
         </div>
-    </div>
+      </div>
 
-    <div class="acknowledgements" data-bind="if: acknowledgements">
-        <h4>Acknowledgements</h4>
-        <p data-bind="text: acknowledgements"></p>
-    </div>
-
-    <div class="references" data-bind="if: references && references.length">
-        <h4>References</h4>
-        <ol data-bind="foreach: references">
-            <li data-bind="html: $data.format()"></li>
-        </ol>
-    </div>
-
-    @koConfName.map { conference =>
-        <hr class="separator">
-        <div class="foot-info">
-            <ul>
-                <!-- ko with: $root.@conference -->
-                <li><span class="kv-key">Copyright:</span> <span data-bind="html: formatCopyright($parent)"></span></li>
-                <li><span class="kv-key">Citation:</span> <span data-bind="html: formatCitation($parent)"></span>
-                </li>
-                <!-- /ko -->
-            </ul>
+      <div class="modal fade" data-bind="attr: {id: 'figure' + ($index() + 1) }">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Figure <span data-bind="text: $index() + 1"></span></h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <img class="img-responsive" data-bind="attr: {src: URL}">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
         </div>
-    }
+      </div>
+    </div>
+  </div>
 
-    @footer
+  <div class="acknowledgements" data-bind="if: acknowledgements">
+    <h4>Acknowledgements</h4>
+    <p data-bind="text: acknowledgements"></p>
+  </div>
+
+  <div class="references" data-bind="if: references && references.length">
+    <h4>References</h4>
+    <ol data-bind="foreach: references">
+      <li data-bind="html: $data.format()"></li>
+    </ol>
+  </div>
+
+  @koConfName.map { conference =>
+  <hr class="separator">
+  <div class="foot-info">
+    <ul>
+      <!-- ko with: $root.@conference -->
+      <li><span class="key">Copyright:</span> <span class="value" data-bind="html: formatCopyright($parent)"></span></li>
+      <li><span class="key">Citation:</span> <span class="value" data-bind="html: formatCitation($parent)"></span></li>
+      <!-- /ko -->
+    </ul>
+  </div>
+  }
+
+  @footer
 
 </div>
